@@ -305,6 +305,7 @@ package body Databases is
                      raise Data_Type_Error;
                end case;
 
+               N := N + 1;
             end if;
          end loop;
       end Build_Where_Clause;
