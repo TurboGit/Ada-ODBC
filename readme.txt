@@ -37,6 +37,8 @@ with the 3.09/3.10/3.11 NT version of GNAT with the Win32Ada v3.0.
 
 To compile the binding run the compile.bat batch.
 
+Thanks to Rob Veenker for his help to fix some bugs.
+
 Pascal Obry
 Team-Ada member.
 e-mail : pascal_obry@csi.com
