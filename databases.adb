@@ -45,9 +45,9 @@ package body Databases is
    function To_PUCHAR is new Ada.Unchecked_Conversion (System.Address,
                                                        Win32.PUCHAR);
 
-   -------------------------------------------------------------------------
-
-   --  Error handling
+   -----------------------
+   -- SQL_Error_Message --
+   -----------------------
 
    function SQL_Error_Message
      (DB               : in Database;
@@ -74,7 +74,10 @@ package body Databases is
         Error_Message (Error_Message'First .. Natural (Last));
    end SQL_Error_Message;
 
-   -------------------------------------------------------------------------
+
+   ---------------------
+   -- Check_SQL_Error --
+   ---------------------
 
    procedure Check_SQL_Error (DB               : in Database;
                               RC               : in ODBC.RETCODE;
@@ -96,9 +99,9 @@ package body Databases is
    end Check_SQL_Error;
 
 
-   -------------------------------------------------------------------------
-
-   --  Connect-Open / Close
+   -------------
+   -- Connect --
+   -------------
 
    procedure Connect (DB : in out Database; Driver, UID, PASSWD : in String)
    is
@@ -140,7 +143,10 @@ package body Databases is
       end ;
    end Connect;
 
-   -------------------------------------------------------------------------
+
+   -----------
+   -- Close --
+   -----------
 
    procedure Close (DB : in out Database)
    is
@@ -156,10 +162,9 @@ package body Databases is
    end Close;
 
 
-
-   -------------------------------------------------------------------------
-
-   --  Columns binding
+   ----------------
+   -- Is_Defined --
+   ----------------
 
    function Is_Defined (Query  : in Select_Statement;
                         Column : in Column_Number)
@@ -168,7 +173,10 @@ package body Databases is
      return Query.Fields (Column).Name /= Null_Unbounded_String;
    end Is_Defined;
 
-   -------------------------------------------------------------------------
+
+   ----------
+   -- Bind --
+   ----------
 
    procedure Bind (Query      : in out Select_Statement;
                    Column     : in     Column_Number;
@@ -197,7 +205,10 @@ package body Databases is
       end case;
    end Bind;
 
-   -------------------------------------------------------------------------
+
+   -----------
+   -- Query --
+   -----------
 
    procedure Query (Query    : in out Select_Statement;
                     Column   : in     Column_Number;
@@ -209,14 +220,20 @@ package body Databases is
       Query.Fields (Column).Query_Value := To_Unbounded_String (Value);
    end Query;
 
-   -------------------------------------------------------------------------
+
+   ------------------
+   -- Reset_Select --
+   ------------------
 
    procedure Reset_Select (Query : in out Select_Statement) is
    begin
       Free (Query.SQL);
    end Reset_Select;
 
-   -------------------------------------------------------------------------
+
+   ----------
+   -- Name --
+   ----------
 
    function Name (Query  : in Select_Statement;
                   Column : in Column_Number)
@@ -226,7 +243,10 @@ package body Databases is
       return To_String (Query.Fields (Column).Name);
    end Name;
 
-   -------------------------------------------------------------------------
+
+   -----------------
+   -- Query_Value --
+   -----------------
 
    function Query_Value (Query  : in Select_Statement;
                          Column : in Column_Number)
@@ -236,7 +256,10 @@ package body Databases is
       return To_String (Query.Fields (Column).Query_Value);
    end Query_Value;
 
-   -------------------------------------------------------------------------
+
+   ----------
+   -- Last --
+   ----------
 
    function Last (Query  : in Select_Statement;
                   Column : in Column_Number)
@@ -247,10 +270,9 @@ package body Databases is
    end Last;
 
 
-
-   -------------------------------------------------------------------------
-
-   --  Actions
+   --------------------
+   -- Get_SQL_Select --
+   --------------------
 
    function Get_SQL_Select (Query   : in Select_Statement;
                             Table   : in String)
@@ -320,7 +342,10 @@ package body Databases is
                                          For_Update => Query.For_Update);
    end Get_SQL_Select;
 
-   -------------------------------------------------------------------------
+
+   ----------------
+   -- SQL_Select --
+   ----------------
 
    procedure SQL_Select (DB     : in     Database;
                          Query  : in out Select_Statement;
@@ -393,7 +418,10 @@ package body Databases is
                        Statement_Handle => Query.DBC_Statement_Handle);
    end SQL_Select;
 
-   -------------------------------------------------------------------------
+
+   -----------
+   -- Fetch --
+   -----------
 
    procedure Fetch  (Query : in     Select_Statement;
                      Found :    out Boolean)
@@ -415,7 +443,10 @@ package body Databases is
       end if;
    end Fetch;
 
-   -------------------------------------------------------------------------
+
+   ---------------
+   -- Parameter --
+   ---------------
 
    procedure Parameter (Parameters :    out Parameter_Set;
                         Column     : in     Column_Number;
@@ -433,7 +464,10 @@ package body Databases is
          Last       => ODBC.SDWORD (Size));
    end Parameter;
 
-   -------------------------------------------------------------------------
+
+   -------------
+   -- Execute --
+   -------------
 
    procedure Execute (DB         : in Database;
                       Command    : in String;
@@ -509,7 +543,10 @@ package body Databases is
       RC := ODBC.SQLFreeStmt (DBC_Statement_Handle, 0);
    end Execute;
 
-   -------------------------------------------------------------------------
+
+   ----------
+   -- Free --
+   ----------
 
    procedure Free (Query : in out Select_Statement) is
 

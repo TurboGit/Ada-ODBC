@@ -29,6 +29,10 @@ with Databases.Options;
 
 package body Databases.Transactions is
 
+   -----------------
+   -- Auto_Commit --
+   -----------------
+
    procedure Auto_Commit (DB       : in Database;
                           Position : in Switch) is
    begin
@@ -43,7 +47,10 @@ package body Databases.Transactions is
       end if;
    end Auto_Commit;
 
-   -------------------------------------------------------------------------
+
+   ------------
+   -- Commit --
+   ------------
 
    procedure Commit (DB : in Database) is
       RC : ODBC.RETCODE;
@@ -54,7 +61,10 @@ package body Databases.Transactions is
       Check_SQL_Error (DB, RC, Procedure_Name => "Commit");
    end Commit;
 
-   -------------------------------------------------------------------------
+
+   --------------
+   -- Rollback --
+   --------------
 
    procedure Rollback (DB : in Database) is
       RC : ODBC.RETCODE;

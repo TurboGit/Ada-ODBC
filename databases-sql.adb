@@ -27,6 +27,10 @@
 
 package body Databases.SQL is
 
+   ------------------
+   -- Build_Select --
+   ------------------
+
    function Build_Select (Fields     : in String  := Empty_String;
                           From       : in String;
                           Where      : in String  := Empty_String;
@@ -61,6 +65,10 @@ package body Databases.SQL is
 
       return To_String (Statement);
    end Build_Select;
+
+   ------------------
+   -- Build_Update --
+   ------------------
 
    function Build_Update (Table : in String;
                           Set   : in String;

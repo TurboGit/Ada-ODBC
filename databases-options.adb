@@ -27,6 +27,10 @@
 
 package body Databases.Options is
 
+   ---------
+   -- Set --
+   ---------
+
    procedure Set (Query  : in Select_Statement;
                   Option : in Natural;
                   Value  : in Natural)
@@ -41,7 +45,10 @@ package body Databases.Options is
                        Statement_Handle => Query.DBC_Statement_Handle);
    end Set;
 
-   -------------------------------------------------------------------------
+
+   ---------
+   -- Set --
+   ---------
 
    procedure Set (DB     : in Database;
                   Option : in Natural;
@@ -56,7 +63,10 @@ package body Databases.Options is
                        Procedure_Name   => "Set (DB)");
    end Set;
 
-   -------------------------------------------------------------------------
+
+   ---------
+   -- Set --
+   ---------
 
    procedure Set (Query      : in out Select_Statement;
                   For_Update : in     For_Update_Options)

@@ -37,6 +37,10 @@ package body Databases.Cursors is
    Space_To_0 : Strings.Maps.Character_Mapping
               := Strings.Maps.To_Mapping (" ", "0");
 
+   ------------
+   -- Create --
+   ------------
+
    procedure Create (Cursor : in out Databases.Cursor) is
       Cursor_String_ID : String := Natural'Image (Cursor_ID);
    begin
@@ -45,12 +49,20 @@ package body Databases.Cursors is
       Cursor_ID := Natural'Succ (Cursor_ID);
    end Create;
 
+   --------------
+   -- Get_Name --
+   --------------
+
    function Get_Name (Cursor : in Databases.Cursor)
                       return String
    is
    begin
       return To_String (Cursor);
    end Get_Name;
+
+   ----------------------
+   -- For_Where_Clause --
+   ----------------------
 
    function For_Where_Clause (Cursor : in Databases.Cursor)
                               return String
