@@ -38,6 +38,8 @@ with Databases.Types;
 
 package body Databases is
 
+   pragma linker_Options ("-lodbc32");
+
    procedure Free is new Ada.Unchecked_Deallocation (String, String_Access);
 
    function To_PUCHAR is new Ada.Unchecked_Conversion (System.Address,
@@ -118,7 +120,7 @@ package body Databases is
          RC := ODBC.SQLAllocEnv (DB.DBC_Environment_Handle'Access);
          Check_SQL_Error (DB, RC,
                           Procedure_Name => "Connect",
-                          Error_Message  => "Allocation Environement");
+                          Error_Message  => "Allocation Environment");
          RC := ODBC.SQLAllocConnect (DB.DBC_Environment_Handle,
                                      DB.DBC_Handle'Access);
          Check_SQL_Error (DB, RC,
@@ -134,7 +136,7 @@ package body Databases is
 
          Check_SQL_Error (DB, RC,
                           Procedure_Name => "Connect",
-                          Error_Message  => "Connection a la base");
+                          Error_Message  => "Base connection");
       end ;
    end Connect;
 
@@ -350,7 +352,7 @@ package body Databases is
                Cursor_Name'Length);
             Check_SQL_Error (DB, RC,
                              Procedure_Name   => "SQL_Select",
-                             Error_Message    => "Creation du curseur",
+                             Error_Message    => "Cursor creation",
                              Statement_Handle => Query.DBC_Statement_Handle);
          end;
       end if;
@@ -363,7 +365,7 @@ package body Databases is
                              Query.SQL'Length);
       Check_SQL_Error (DB, RC,
                        Procedure_Name   => "SQL_Select",
-                       Error_Message    => "Preparation de la requete",
+                       Error_Message    => "Preparing query",
                        Statement_Handle => Query.DBC_Statement_Handle);
 
       for Column in Query.Fields'Range loop
@@ -378,7 +380,7 @@ package body Databases is
                Query.Fields (Column).Last'Access);
             Check_SQL_Error (DB, RC,
                              Procedure_Name => "SQL_Select",
-                             Error_Message  => "Binding de la colonne " &
+                             Error_Message  => "Binding column : " &
                              Name (Query, Column));
          end if;
       end loop;
@@ -386,7 +388,7 @@ package body Databases is
       RC := ODBC.SQLExecute (Query.DBC_Statement_Handle);
       Check_SQL_Error (DB, RC,
                        Procedure_Name   => "SQL_Select",
-                       Error_Message    => "Execution de la commande SQL : " &
+                       Error_Message    => "Execute SQL statement : " &
                                            Query.SQL.all,
                        Statement_Handle => Query.DBC_Statement_Handle);
    end SQL_Select;
@@ -408,7 +410,7 @@ package body Databases is
       else
          Check_SQL_Error (Query.Base, RC,
                           Procedure_Name   => "Fetch",
-                          Error_Message    => "Erreur sur le fetch",
+                          Error_Message    => "Fetch error",
                           Statement_Handle => Query.DBC_Statement_Handle);
       end if;
    end Fetch;
@@ -439,12 +441,13 @@ package body Databases is
    is
       DBC_Statement_Handle : aliased ODBC.HSTMT;
       RC                   : ODBC.RETCODE;
+      Tmp_Params           : Parameter_Array := Parameters.Parameters;
    begin
       RC := ODBC.SQLAllocStmt (DB.DBC_Handle,
                                DBC_Statement_Handle'Access);
       Check_SQL_Error (DB, RC,
-                       Procedure_Name   => "Exec",
-                       Error_Message    => "Allocation Statement",
+                       Procedure_Name   => "Execute",
+                       Error_Message    => "Allocation statement",
                        Statement_Handle => DBC_Statement_Handle);
 
       if Parameters = No_Parameter then
@@ -455,7 +458,7 @@ package body Databases is
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
-            Error_Message    => "Execution directe de la commande SQL : " &
+            Error_Message    => "Direct execution of SQL statement : " &
                                 Command,
             Statement_Handle => DBC_Statement_Handle);
       else
@@ -466,45 +469,62 @@ package body Databases is
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
-            Error_Message    => "Preparation de la commande SQL : " &
+            Error_Message    => "Preparation of SQL statement : " &
                                 Command,
             Statement_Handle => DBC_Statement_Handle);
 
          for Parameter_Number in 1 .. Parameters.N loop
-            declare
-               Parameter : Parameter_Datas
-                         := Parameters.Parameters (Parameter_Number);
-            begin
-               RC := ODBC_EXT.SQLBindParameter
-                 (DBC_Statement_Handle,
-                  ODBC.UWORD (Parameter_Number),
-                  Parameter.Mode,
-                  Types.SQL_To_C (Parameter.Data_Model).C_Value,
-                  Types.SQL_To_C (Parameter.Data_Model).SQL_Value,
-                  ODBC.UDWORD (Parameter.Size),
-                  0,
-                  Parameter.Address,
-                  Parameter.Size,
-                  Parameter.Last'Access);
-               Check_SQL_Error
-                 (DB, RC,
-                  Procedure_Name   => "Execute",
-                  Error_Message    => "Lien des parametres de la " &
-                                      "commande SQL : " & Command,
-                  Statement_Handle => DBC_Statement_Handle);
-            end;
+
+            RC := ODBC_EXT.SQLBindParameter
+              (DBC_Statement_Handle,
+               ODBC.UWORD (Parameter_Number),
+               Tmp_Params (Parameter_Number).Mode,
+               Types.SQL_To_C
+                  (Tmp_Params (Parameter_Number).Data_Model).C_Value,
+               Types.SQL_To_C
+                  (Tmp_Params (Parameter_Number).Data_Model).SQL_Value,
+               ODBC.UDWORD (Tmp_Params (Parameter_Number).Size),
+               0,
+               Tmp_Params (Parameter_Number).Address,
+               Tmp_Params (Parameter_Number).Size,
+               Tmp_Params (Parameter_Number).Last'Access);
+
+            Check_SQL_Error
+              (DB, RC,
+               Procedure_Name   => "Execute",
+               Error_Message    => "Parameters of SQL statement : " &
+               Command,
+               Statement_Handle => DBC_Statement_Handle);
          end loop;
 
          RC := ODBC.SQLExecute (DBC_Statement_Handle);
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
-            Error_Message    => "Execution de la commande SQL : " &
+            Error_Message    => "Execution of SQL statement : " &
                                 Command,
             Statement_Handle => DBC_Statement_Handle);
       end if;
 
       RC := ODBC.SQLFreeStmt (DBC_Statement_Handle, 0);
    end Execute;
+
+   -------------------------------------------------------------------------
+
+   procedure Free (Query : in out Select_Statement) is
+
+      RC  : ODBC.RETCODE;
+
+   begin
+      -- release  memory used by this Query
+      Free (Query.SQL);
+
+      --  free statement block
+      RC := ODBC.SQLFreeStmt (Query.DBC_Statement_Handle, ODBC.SQL_DROP);
+      Check_SQL_Error (Query.Base, RC,
+                       Procedure_Name   => "Free",
+                       Error_Message    => "Free Statement Block",
+                       Statement_Handle => Query.DBC_Statement_Handle);
+   end Free;
 
 end Databases;
