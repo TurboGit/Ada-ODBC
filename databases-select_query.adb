@@ -256,6 +256,7 @@ package body Databases.Select_Query is
                           Ada.Strings.Left);
 
                when ODBC.SQL_SMALLINT =>
+                  Tmp_Integer := 0;
                   RC := ODBC_EXT.SQLGetData
                     (Context.DBC_Statement_Handle,
                      ODBC.UWORD (Column),
