@@ -25,8 +25,8 @@ procedure Demo is
    Clients : aliased Databases.Database;
    Query   : Databases.Select_Statement (3);
 
-   Nom    : String (1 .. 20);
-   Prenom : String (1 .. 20);
+   Nom    : String (1 .. 50);
+   Prenom : String (1 .. 50);
    Age    : Positive;
 
 begin
