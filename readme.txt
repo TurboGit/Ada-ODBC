@@ -33,10 +33,10 @@ this abstraction, so if you plan to use it, you'll need sometimes to call
 a Win32Ada function.
 
 These samples have been tested with GNAT 3.04a under NT with Win32Ada v3.0 and
-with the 3.09 version of GNAT with the Win32Ada v3.0.
+with the 3.09/3.10/3.11 NT version of GNAT with the Win32Ada v3.0.
 
 To compile the binding run the compile.bat batch.
 
 Pascal Obry
 Team-Ada member.
-e-mail : pascal_obry@compuserve.com
+e-mail : pascal_obry@csi.com
