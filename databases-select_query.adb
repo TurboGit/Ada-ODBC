@@ -38,6 +38,10 @@ package body Databases.Select_Query is
    function To_PUCHAR is new Ada.Unchecked_Conversion (System.Address,
                                                        Win32.PUCHAR);
 
+   -------------
+   -- Execute --
+   -------------
+
    procedure Execute (DB         : in      Database;
                       Statement  : in      String;
                       Context    :    out  Select_Datas;
@@ -70,7 +74,7 @@ package body Databases.Select_Query is
             Check_SQL_Error
               (DB, RC,
                Procedure_Name   => "Execute",
-               Error_Message    => "Creation du curseur",
+               Error_Message    => "Cursor creation",
                Statement_Handle => Context.DBC_Statement_Handle);
          end;
       end if;
@@ -85,7 +89,7 @@ package body Databases.Select_Query is
             Context.SQL'Length);
          Check_SQL_Error (DB, RC,
                           Procedure_Name   => "Execute",
-                          Error_Message    => "Execution de la requete",
+                          Error_Message    => "Execute query",
                           Statement_Handle => Context.DBC_Statement_Handle);
       else
          RC := ODBC.SQLPrepare
@@ -95,7 +99,7 @@ package body Databases.Select_Query is
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
-            Error_Message    => "Preparation de la commande SQL : " &
+            Error_Message    => "Preparation of SQL statement : " &
                                 Context.SQL.all,
             Statement_Handle => Context.DBC_Statement_Handle);
 
@@ -118,8 +122,8 @@ package body Databases.Select_Query is
                Check_SQL_Error
                  (DB, RC,
                   Procedure_Name   => "Execute",
-                  Error_Message    => "Lien des parametres de la " &
-                                      "commande SQL : " & Context.SQL.all,
+                  Error_Message    => "Parameters of SQL statement : " &
+                                      Context.SQL.all,
                   Statement_Handle => Context.DBC_Statement_Handle);
             end;
          end loop;
@@ -128,7 +132,7 @@ package body Databases.Select_Query is
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
-            Error_Message    => "Execution de la commande SQL : " &
+            Error_Message    => "Execution of SQL statement : " &
                                  Context.SQL.all,
             Statement_Handle => Context.DBC_Statement_Handle);
       end if;
@@ -148,7 +152,7 @@ package body Databases.Select_Query is
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
-            Error_Message    => "Recuperation du nombre de colonnes",
+            Error_Message    => "Get number of columns",
             Statement_Handle => Context.DBC_Statement_Handle);
 
          Context.Columns :=
@@ -175,6 +179,10 @@ package body Databases.Select_Query is
 
    end Execute;
 
+   -----------
+   -- Fetch --
+   -----------
+
    procedure Fetch (Context : in     Select_Datas;
                     Found   :    out Boolean)
    is
@@ -196,7 +204,7 @@ package body Databases.Select_Query is
             Check_SQL_Error
               (Context.Base, RC,
                Procedure_Name   => "Get_Columns_Datas",
-               Error_Message    => "Erreur sur le SQLGetData",
+               Error_Message    => "Error on SQLGetData",
                Statement_Handle => Context.DBC_Statement_Handle);
          end Check_Error;
 
@@ -308,17 +316,25 @@ package body Databases.Select_Query is
       else
          Check_SQL_Error (Context.Base, RC,
                           Procedure_Name   => "Fetch",
-                          Error_Message    => "Erreur sur le fetch",
+                          Error_Message    => "Fetch error",
                           Statement_Handle => Context.DBC_Statement_Handle);
          Get_Columns_Datas;
       end if;
    end Fetch;
+
+   -----------------------
+   -- Number_Of_Columns --
+   -----------------------
 
    function Number_Of_Columns (Context : in Select_Datas)
                                return Positive is
    begin
       return Context.Columns'Length;
    end Number_Of_Columns;
+
+   ---------------
+   -- Get_Value --
+   ---------------
 
    function Get_Value (Context : in Select_Datas;
                        Column  : in Positive)
