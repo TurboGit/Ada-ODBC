@@ -1,0 +1,326 @@
+--  ----------------------------------------------------------------------  --
+--
+--  Author  : Pascal Obry
+--  E-Mail  : pascal.obry@der.edfgdf.fr
+--
+--  ----------------------------------------------------------------------  --
+--
+--  $Id$
+--
+--  ----------------------------------------------------------------------  --
+--
+--       Module Name : Databases
+--         File name : databases.ads
+--
+--       Created by  : Pascal Obry
+--               on  : Thu Mar 21 09:07:43 1996
+--
+--  Last modified by : $Author$
+--                     $Date$
+--                     $Revision$
+--
+--         Locked by : $Locker$
+--
+--  ======================================= I D E N T I F I C A T I O N ==  --
+--
+--  Description
+--
+--  Mots-cles
+--
+--  Caracterisation
+--     Unite    : Paquetage
+--     Genre    : Type de donnee abstrait
+--     Liaisons : Surcouche
+--
+--  Disponibilite
+--     Systemes de compilation
+--        GNAT, Pentium Pro, Windows NT
+--     Access
+--        Sources
+--
+--  Historique
+--
+--  ======================================= S P E C I F I C A T I O N S ==  --
+--
+--  Elements generiques et ajustement de comportement
+--     (Unite non generique)
+--
+--  Elements principaux
+--
+--     *** Constructors / Destructors
+--
+--     Connect (DB, Driver, UID, Passwd)
+--        Ouvre une base de donnees ODBC.
+--        Driver : DSN (Data Source Name) de la base ODBC.
+--        UID, Passwd : nom et mot de passe de l'utilisateur.
+--        => SQL_Error
+--
+--     Close
+--        ferme la base de donnees.
+--
+--     Bind (Query, Column, Name, Address, Size, Data_Motel)
+--        permet de designer les champs a recuperer lors du Select.
+--        Column  : un numero de colonne.
+--        Name    : le nom de la colonne.
+--        Address : pointe sur une variable qui contiendra la valeur de la
+--                  colonne.
+--        Size    : la taille en octect de cette variable.
+--        Data_Model : le type de donnees dans la colonne.
+--        => Data_Type_Error
+--
+--     Query (Query, Column, Operator, Value)
+--        permet de specifier un masque (clause Where) pour les colonnes.
+--
+--     Reset_Query
+--        efface les informations de lien (Bind ci-dessus) et les masque
+--        (Query ci-dessus) pour les colonnes.
+--
+--     *** Accessors :
+--
+--     Name
+--        retourne le nom de la colonne Column.
+--
+--     Query_Value
+--        retourne le masque de selection pour la colonne Column.
+--        la clause Where est un And entre tous les masques.
+--
+--     Last
+--        retourne la taille de la colonne Column apres un Select.
+--        cette fonction est utilisable avec les models : SQL_CHAR et
+--        SQL_VARCHAR.
+--
+--
+--     Get_SQL_Select
+--        retourne la requete sous la forme d'une chaine de carateres.
+--        => Data_Type_Error
+--
+--     SQL_Select (DB, Query, Table, Cursor)
+--        execute un select avec les colonnes definie par Bind sur Table
+--        et avec la clause where definie par la commande Query.
+--        => SQL_Error
+--
+--     Fetch (Query, Found)
+--        retourne la ligne suivante pour la Query.
+--        => SQL_Error
+--
+--     Parameter
+--        permet de construire un objet Parameter_Set. Ce sont des
+--        parametres d'instruction SQL (SQLBindParameter).
+--
+--     Execute (DB, Command, Parameters)
+--        execute Command SQL sur la base DB. Il est possible d'appeler une
+--        procedure cataloguee et de passer des parameteres dans
+--        parameters. La construction d'un objet Parameter_Set se fait par
+--        l'intermediaire de la procedure Parameter.
+--        => SQL_Error
+--
+--
+--  Elements annexes
+--
+--  ===================================== I M P L E M E N T A T I O N S ==  --
+--
+--  Elaboration
+--     (neant - pas de pragma d'elaboration necessaire)
+--
+--  Algorithme
+--     (neant)
+--
+--  Elements sensibles utilises
+--     (neant)
+--
+--  Performances
+--     (neant)
+--
+--  Autres informations
+--     (neant)
+--
+--  ======================================================================  --
+--
+
+with Ada.Strings.Unbounded;
+with Win32.SQL;
+with Win32.SQLExt;
+
+with System;
+
+package Databases is
+
+   type Switch is (On, Off);
+
+   type Database is limited private;
+   type Cursor is private;
+
+   No_Cursor : constant Cursor;
+
+   Maximum_Number_Of_Column : constant := 100;
+   subtype Column_Number is Natural range 0 .. Maximum_Number_Of_Column;
+
+   type Select_Statement (N : Column_Number) is limited private;
+   type For_Update_Options is (None, Yes, Yes_No_Wait);
+   type Operators is (Equal, Not_Equal);
+
+   type Parameter_Set (N : Column_Number) is private;
+   No_Parameter : constant Parameter_Set;
+
+   --  exceptions
+
+   SQL_Error       : exception;
+   Data_Type_Error : exception;
+
+
+   --  data type
+
+   type Data_Type is (SQL_CHAR, SQL_VARCHAR,
+                      SQL_NUMERIC, SQL_DECIMAL, SQL_INTEGER, SQL_SMALLINT,
+                      SQL_FLOAT, SQL_REAL, SQL_DOUBLE);
+
+   SQL_PARAM_INPUT  : constant := Win32.SQLEXT.SQL_PARAM_INPUT;
+   SQL_PARAM_OUTPUT : constant := Win32.SQLEXT.SQL_PARAM_OUTPUT;
+
+   --  -----------------------------------------------------------------  --
+   --  Connect-Open / Close
+
+   procedure Connect (DB : in out Database; Driver, UID, PASSWD : in String);
+   procedure Close   (DB : in out Database);
+
+
+   --  -----------------------------------------------------------------  --
+   --  Columns binding
+
+   procedure Bind (Query      : in out Select_Statement;
+                   Column     : in     Column_Number;
+                   Name       : in     String;
+                   Address    : in     System.Address;
+                   Size       : in     Natural;
+                   Data_Model : in     Data_Type);
+
+   procedure Query (Query    : in out Select_Statement;
+                    Column   : in     Column_Number;
+                    Operator : in     Operators;
+                    Value    : in     String);
+
+   procedure Reset_Select (Query : in out Select_Statement);
+
+
+   --  -----------------------------------------------------------------  --
+   --  Accessors
+
+   function Name (Query  : in Select_Statement;
+                  Column : in Column_Number)
+                  return String;
+
+   function Query_Value (Query  : in Select_Statement;
+                         Column : in Column_Number)
+                         return String;
+
+   function Last (Query  : in Select_Statement;
+                  Column : in Column_Number)
+                  return Natural;
+
+
+   --  -----------------------------------------------------------------  --
+   --  Actions
+
+   function Get_SQL_Select (Query : in Select_Statement;
+                            Table : in String)
+                            return String;
+
+   procedure SQL_Select (DB      : in     Database;
+                         Query   : in out Select_Statement;
+                         Table   : in     String;
+                         Cursor  : in     Databases.Cursor := No_Cursor);
+
+   procedure Fetch  (Query : in     Select_Statement;
+                     Found :    out Boolean);
+
+   procedure Parameter (Parameters :    out Parameter_Set;
+                        Column     : in     Column_Number;
+                        Mode       : in     Natural;
+                        Address    : in     System.Address;
+                        Size       : in     Natural;
+                        Data_Model : in     Data_Type);
+
+   procedure Execute (DB         : in Database;
+                      Command    : in String;
+                      Parameters : in Parameter_Set := No_Parameter);
+
+
+private
+
+   package ODBC     renames Win32.SQL;
+   package ODBC_EXT renames Win32.SQLExt;
+
+   procedure Check_SQL_Error (DB               : in Database;
+                              RC               : in ODBC.RETCODE;
+                              Procedure_Name   : in String;
+                              Error_Message    : in String := "";
+                              Statement_Handle : in ODBC.HSTMT
+                                               := System.Null_Address);
+   use Ada.Strings.Unbounded;
+
+   type String_Access is access all String;
+
+   -------------------------------------------------------------------------
+
+   type Database is
+      record
+         DBC_Handle             : aliased ODBC.HDBC;
+         DBC_Environment_Handle : aliased ODBC.HENV;
+
+         Driver, UID, PASSWD    : String_Access;
+      end record;
+
+   type Field_Datas is
+      record
+         Name        : Unbounded_String;
+         Data_Model  : Data_Type;
+         Query_Value : Unbounded_String;
+         Operator    : Operators;
+         Address     : System.Address;
+         Size        : ODBC.SDWORD;
+         Last        : aliased ODBC.SDWORD;
+      end record;
+
+   type Fields_Array is array (Column_Number range <>) of Field_Datas;
+
+   type DB_Access is access Database;
+
+   -------------------------------------------------------------------------
+
+   type Select_Statement (N : Column_Number) is
+      record
+         Base                 : Database;
+         DBC_Statement_Handle : aliased ODBC.HSTMT;
+         SQL                  : String_Access;
+         Fields               : Fields_Array (1 .. N);
+         For_Update           : For_Update_Options := None;
+      end record;
+
+   -------------------------------------------------------------------------
+
+   type Parameter_Datas is
+      record
+         Mode        : ODBC.SWORD;
+         Data_Model  : Data_Type;
+         Address     : System.Address;
+         Size        : ODBC.SDWORD;
+         Last        : aliased ODBC.SDWORD;
+      end record;
+
+   type Parameter_Array is array (Column_Number range <>) of Parameter_Datas;
+
+   type Parameter_Set (N : Column_Number) is
+      record
+         Parameters : Parameter_Array (1 .. N);
+      end record;
+
+   Empty_Parameter_Set : Parameter_Set (0);
+   No_Parameter : constant Parameter_Set := Empty_Parameter_Set;
+
+   -------------------------------------------------------------------------
+
+   type Cursor is new Unbounded_String;
+
+   No_Cursor : constant Cursor := Cursor (Null_Unbounded_String);
+
+end Databases;
