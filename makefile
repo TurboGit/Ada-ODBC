@@ -18,5 +18,10 @@ install:
 	cp da*.ad[sb]	$(INSTALL_DIR)
 	cp da*.{o,ali}	$(INSTALL_DIR)
 
+release:
+	tar cvf databases.tar databases*.ad[sb] clients.mdb clients.xls \
+		compile.bat demo*.adb readme.txt
+	gzip -9 databases.tar
+
 clean:
 	rm *.o *.ali *.exe
