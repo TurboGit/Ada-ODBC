@@ -170,9 +170,16 @@ package Databases is
 
    --  data type
 
-   type Data_Type is (SQL_CHAR, SQL_VARCHAR,
+   type Data_Type is (SQL_CHAR, SQL_VARCHAR, SQL_DATE,
                       SQL_NUMERIC, SQL_DECIMAL, SQL_INTEGER, SQL_SMALLINT,
                       SQL_FLOAT, SQL_REAL, SQL_DOUBLE);
+
+   type Date_Record is
+      record
+         Year  : Short_Integer;
+         Month : Short_Integer;
+         Day   : Short_Integer;
+      end record;
 
    SQL_PARAM_INPUT  : constant := Win32.SQLEXT.SQL_PARAM_INPUT;
    SQL_PARAM_OUTPUT : constant := Win32.SQLEXT.SQL_PARAM_OUTPUT;

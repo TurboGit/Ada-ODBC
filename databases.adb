@@ -183,6 +183,8 @@ package body Databases is
 
       --  check if Data_Model is ok.
       case Data_Model is
+         when SQL_DATE =>
+            null;
          when SQL_CHAR | SQL_VARCHAR =>
             null;
          when SQL_NUMERIC | SQL_DECIMAL | SQL_INTEGER |
