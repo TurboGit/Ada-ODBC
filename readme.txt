@@ -2,6 +2,9 @@
 		   ODBC Samples and a Database abstraction
 		   ---------------------------------------
 
+				  release 2
+
+
 $Id$
 
 
@@ -32,12 +35,28 @@ and Win32Ada. Note that not all the ODBC functionalities are available from
 this abstraction, so if you plan to use it, you'll need sometimes to call
 a Win32Ada function.
 
-These samples have been tested with GNAT 3.04a under NT with Win32Ada v3.0 and
-with the 3.09/3.10/3.11 NT version of GNAT with the Win32Ada v3.0.
+These samples have been tested with GNAT 3.11 and GNAT 3.12.
 
 To compile the binding run the compile.bat batch.
 
+What New
+--------
+
+   since release 1
+
+      Handle SQL Like operator
+      Add mode flexibility to the SQL build function, it is now possible
+        - to add a specific Where_Clause
+        - to add a some specific option to add to the SQL query
+	(see Databases.Query)
+
+Acknoledgment
+-------------
+
 Thanks to Rob Veenker for his help to fix some bugs.
+
+Thanks to Anders Wirzenius for his contribution and ideas about new features.
+
 
 Pascal Obry
 Team-Ada member.
