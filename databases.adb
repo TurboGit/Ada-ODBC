@@ -105,7 +105,7 @@ package body Databases is
 
    procedure Connect (DB : in out Database; Driver, UID, PASSWD : in String)
    is
-   begin --  Connect
+   begin
       --  is DB already open ?
       if DB.Driver /= null then
          Ada.Exceptions.Raise_Exception (SQL_Error'Identity,
@@ -151,7 +151,7 @@ package body Databases is
    procedure Close (DB : in out Database)
    is
       RC : ODBC.RETCODE;
-   begin --  Close
+   begin
       RC := ODBC.SQLDisconnect  (DB.DBC_Handle);
       RC := ODBC.SQLFreeConnect (DB.DBC_Handle);
       RC := ODBC.SQLFreeEnv     (DB.DBC_Environment_Handle);
@@ -215,9 +215,27 @@ package body Databases is
                     Operator : in     Operators;
                     Value    : in     String)
    is
-   begin --  Query
+   begin
       Query.Fields (Column).Operator    := Operator;
       Query.Fields (Column).Query_Value := To_Unbounded_String (Value);
+   end Query;
+
+
+   -----------
+   -- Query --
+   -----------
+
+   procedure Query (Query        : in out Select_Statement;
+                    Where_Clause : in     String := "";
+                    SQL_Clause   : in     String := "") is
+   begin
+      if Where_Clause /= "" then
+         Query.Where_Clause := To_Unbounded_String (Where_Clause);
+      end if;
+
+      if SQL_Clause /= "" then
+         Query.SQL_Clause := To_Unbounded_String (SQL_Clause);
+      end if;
    end Query;
 
 
@@ -239,7 +257,7 @@ package body Databases is
                   Column : in Column_Number)
                   return String
    is
-   begin --  Name
+   begin
       return To_String (Query.Fields (Column).Name);
    end Name;
 
@@ -252,7 +270,7 @@ package body Databases is
                          Column : in Column_Number)
                          return String
    is
-   begin --  Query_Value
+   begin
       return To_String (Query.Fields (Column).Query_Value);
    end Query_Value;
 
@@ -265,7 +283,7 @@ package body Databases is
                   Column : in Column_Number)
                   return Natural
    is
-   begin --  Value
+   begin
       return Natural (Query.Fields (Column).Last);
    end Last;
 
@@ -284,7 +302,7 @@ package body Databases is
       Fields     : Unbounded_String;
       Conditions : Unbounded_String;
 
-   begin --  Get_SQL_Select
+   begin
 
       --  columns
       for Column in Query.Fields'Range loop
@@ -315,6 +333,8 @@ package body Databases is
                      Append (Conditions, "=");
                   when Not_Equal =>
                      Append (Conditions, "!=");
+                  when Like =>
+                     Append (Conditions, " like ");
                end case;
 
                case Query.Fields (Column).Data_Model is
@@ -334,12 +354,28 @@ package body Databases is
                N := N + 1;
             end if;
          end loop;
+
+         if Query.Where_Clause /= Null_Unbounded_String then
+            if N > 1 then
+               Append (Conditions, " AND ");
+            end if;
+            Append (Conditions, Query.Where_Clause);
+         end if;
       end Build_Where_Clause;
 
-      return Databases.SQL.Build_Select (Fields     => To_String (Fields),
-                                         From       => Table,
-                                         Where      => To_String (Conditions),
-                                         For_Update => Query.For_Update);
+      declare
+         Select_Statement : constant String
+           := Databases.SQL.Build_Select (Fields     => To_String (Fields),
+                                          From       => Table,
+                                          Where      => To_String (Conditions),
+                                          For_Update => Query.For_Update);
+      begin
+         if Query.SQL_Clause /= Null_Unbounded_String then
+            return Select_Statement & ' ' & To_String (Query.SQL_Clause);
+         else
+            return Select_Statement;
+         end if;
+      end;
    end Get_SQL_Select;
 
 
@@ -353,7 +389,7 @@ package body Databases is
                          Cursor : in     Databases.Cursor := No_Cursor)
    is
       RC  : ODBC.RETCODE;
-   begin --  SQL_Select
+   begin
 
       Query.Base := DB;
 
@@ -428,7 +464,7 @@ package body Databases is
    is
       use ODBC;
       RC : ODBC.RETCODE;
-   begin --  Fetch
+   begin
       RC := ODBC.SQLFetch (Query.DBC_Statement_Handle);
 
       Found := True;
