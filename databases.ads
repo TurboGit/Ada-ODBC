@@ -70,6 +70,16 @@
 --
 --     Query (Query, Column, Operator, Value)
 --        permet de specifier un masque (clause Where) pour les colonnes.
+--        Un AND est utilise entre toutes les conditions sur les colonnes pour
+--        creer la clause Where.
+--
+--     Query (Query, Where_Clause, SQL_Clause)
+--        La condition Were_Clause est ajoutee a la fin de la clause Where
+--        construite a partir des masques (voir Query ci-dessus) avec un
+--        operateur AND. Si aucun masque n'est specifie alors on utilise
+--        uniquement cette clause.
+--        SQL_Clause est ajoute a la fin du select. Ceci est a utiliser pour
+--        ajouter un tri (ORDER BY) par exemple.
 --
 --     Reset_Query
 --        efface les informations de lien (Bind ci-dessus) et les masque
@@ -153,13 +163,17 @@ package Databases is
    No_Cursor : constant Cursor;
 
    Maximum_Number_Of_Column : constant := 100;
+
    subtype Column_Number is Natural range 0 .. Maximum_Number_Of_Column;
 
    type Select_Statement (N : Column_Number) is limited private;
+
    type For_Update_Options is (None, Yes, Yes_No_Wait);
-   type Operators is (Equal, Not_Equal);
+
+   type Operators is (Equal, Not_Equal, Like);
 
    type Parameter_Set (N : Column_Number) is private;
+
    No_Parameter : constant Parameter_Set;
 
    --  exceptions
@@ -205,6 +219,10 @@ package Databases is
                     Column   : in     Column_Number;
                     Operator : in     Operators;
                     Value    : in     String);
+
+   procedure Query (Query        : in out Select_Statement;
+                    Where_Clause : in     String := "";
+                    SQL_Clause   : in     String := "");
 
    procedure Reset_Select (Query : in out Select_Statement);
 
@@ -274,7 +292,6 @@ private
       record
          DBC_Handle             : aliased ODBC.HDBC;
          DBC_Environment_Handle : aliased ODBC.HENV;
-
          Driver, UID, PASSWD    : String_Access;
       end record;
 
@@ -302,6 +319,8 @@ private
          SQL                  : String_Access;
          Fields               : Fields_Array (1 .. N);
          For_Update           : For_Update_Options := None;
+         Where_Clause         : Unbounded_String;
+         SQL_Clause           : Unbounded_String;
       end record;
 
    -------------------------------------------------------------------------
