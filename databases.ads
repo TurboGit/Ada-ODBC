@@ -251,6 +251,7 @@ package Databases is
                       Command    : in String;
                       Parameters : in Parameter_Set := No_Parameter);
 
+   procedure Free (Query : in out Select_Statement);
 
 private
 
