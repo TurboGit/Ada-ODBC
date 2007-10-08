@@ -1,28 +1,24 @@
 
-# $Id$
-
-INSTALL_DIR	=	/usr/ada.libraries/SQL
+INSTALL_DIR	=	$(HOME)/opt/SQL
 
 all:
-	for file in `ls da*.adb`; \
-		do gnatmake -i -c $$file; \
-	done;
+	gnat make -Pdatabases
 
-demos:
-	gnatmake -i demo -largs -lodbc32
-	gnatmake -i demo3 -largs -lodbc32
-	gnatmake -i demo4 -largs -lodbc32
-	gnatmake -i demo5 -largs -lodbc32
+demos: all
 
 install:
-	cp da*.ad[sb]	$(INSTALL_DIR)
-	cp da*.{o,ali}	$(INSTALL_DIR)
+	mkdir -p $(INSTALL_DIR)/src
+	mkdir -p $(INSTALL_DIR)/obj
+	cp -p src/* $(INSTALL_DIR)/src
+	cp -p obj/data* $(INSTALL_DIR)/obj
+	cp -p databases.gpr $(INSTALL_DIR)
 
 release:
 	-rm databases.tar*
-	tar cvf databases.tar databases*.ad[sb] clients.mdb clients.xls \
-		compile.bat demo*.adb readme.txt
+	tar cvf databases.tar databases.gpr src/databases*.ad[sb] \
+		demos/clients.mdb demos/clients.xls \
+		demos/demo*.adb demos/test_select.adb readme.txt
 	gzip -9 databases.tar
 
 clean:
-	rm *.o *.ali *.exe
+	gnat clean -Pdatabases
