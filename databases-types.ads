@@ -1,83 +1,25 @@
-
---  ----------------------------------------------------------------------  --
---
---                Copyright (C) 1996 Electricite De France
---                   Direction des Etudes et Recherches
---
---  Author  : Pascal Obry
---  Address : EDF/DER 1, av du General de Gaulle 92141 Clamart CEDEX
---  E-Mail  : pascal.obry@der.edfgdf.fr
---
---  ----------------------------------------------------------------------  --
---
---  $Id$
---
---  ----------------------------------------------------------------------  --
---
---       Module Name : Databases-Types
---         File name : databases-types.ads
---
---       Created by  : Pascal Obry
---               on  : Tue May 14 15:45:00 1996
---
---  Last modified by : $Author$
---                     $Date$
---                     $Revision$
---
---         Locked by : $Locker$
---
---  ======================================= I D E N T I F I C A T I O N ==  --
---
---  Description
---     Description des relations entre types C et ODBC-SQL.
---
---  Mots-cles
---     ODBC, SQL, Types de donnees
---
---  Caracterisation
---     Unite    : Paquetage
---     Genre    :
---     Liaisons : Unite fille
---
---  Disponibilite
---     Systemes de compilation
---        GNAT, Pentium Pro, Windows-NT
---     Access
---        Sources
---
---  Historique
---
---  ======================================= S P E C I F I C A T I O N S ==  --
---
---  Elements generiques et ajustement de comportement
---     (Unite non generique)
---
---  Elements principaux
+------------------------------------------------------------------------------
+--                                Database                                  --
+--                                                                          --
+--                        Copyright (C) 1999-2007                           --
+--                                                                          --
+--  This library is free software; you can redistribute it and/or modify    --
+--  it under the terms of the GNU General Public License as published by    --
+--  the Free Software Foundation; either version 2 of the License, or (at   --
+--  your option) any later version.                                         --
+--                                                                          --
+--  This library is distributed in the hope that it will be useful, but     --
+--  WITHOUT ANY WARRANTY; without even the implied warranty of              --
+--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       --
+--  General Public License for more details.                                --
+--                                                                          --
+--  You should have received a copy of the GNU General Public License       --
+--  along with this library; if not, write to the Free Software Foundation, --
+--  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.       --
+------------------------------------------------------------------------------
 --
 --     SQL_To_C
 --        Table de relations entre donnees ODBC-SQL et C.
---
---  Elements annexes
---
---  ===================================== I M P L E M E N T A T I O N S ==  --
---
---  Elaboration
---     (neant - pas de pragma d'elaboration necessaire)
---
---  Algorithme
---     (neant)
---
---  Elements sensibles utilises
---     (neant)
---
---  Performances
---     (neant)
---
---  Autres informations
---     (neant)
---
---  ======================================================================  --
---
 
 private package Databases.Types is
 

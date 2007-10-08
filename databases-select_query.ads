@@ -1,30 +1,22 @@
-
---  ----------------------------------------------------------------------  --
---
---  Author  : Pascal Obry
---  E-Mail  : pascal.obry@der.edfgdf.fr
---
---  ----------------------------------------------------------------------  --
---
---  $Id$
---
---  ----------------------------------------------------------------------  --
---
---       Module Name : Databases-Select_Query
---         File name : databases-select_query.ads
---
---       Created by  : Pascal Obry
---               on  : Fri Apr 26 11:02:29 1996
---
---  Last modified by : $Author$
---                     $Date$
---                     $Revision$
---
---         Locked by : $Locker$
---
---  ======================================= I D E N T I F I C A T I O N ==  --
---
---  Description
+------------------------------------------------------------------------------
+--                                Database                                  --
+--                                                                          --
+--                        Copyright (C) 1999-2007                           --
+--                                                                          --
+--  This library is free software; you can redistribute it and/or modify    --
+--  it under the terms of the GNU General Public License as published by    --
+--  the Free Software Foundation; either version 2 of the License, or (at   --
+--  your option) any later version.                                         --
+--                                                                          --
+--  This library is distributed in the hope that it will be useful, but     --
+--  WITHOUT ANY WARRANTY; without even the implied warranty of              --
+--  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU       --
+--  General Public License for more details.                                --
+--                                                                          --
+--  You should have received a copy of the GNU General Public License       --
+--  along with this library; if not, write to the Free Software Foundation, --
+--  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.       --
+------------------------------------------------------------------------------
 --
 --     Gestion des requetes SQL Select. Cette abstraction est de plus haut
 --     niveau que celle dans Databases. Ici, il n'y a pas de notion de
@@ -34,28 +26,6 @@
 --
 --     Les donnees des colonnes sont retournees sous forme de chaine de
 --     caracteres.
---
---  Mots-cles
---
---  Caracterisation
---     Unite    : Paquetage
---     Genre    :
---     Liaisons : Unite fille
---
---  Disponibilite
---     Systemes de compilation
---        GNAT, Pentium Pro, Windows NT
---     Access
---        Sources
---
---  Historique
---
---  ======================================= S P E C I F I C A T I O N S ==  --
---
---  Elements generiques et ajustement de comportement
---     (Unite non generique)
---
---  Elements principaux
 --
 --     Execute
 --        execution d'une commande SQL Select. Il est possible d'executer
@@ -70,28 +40,6 @@
 --
 --     Get_Value
 --        recupere la valeur d'une colonne de la ligne resultat.
---
---  Elements annexes
---
---  ===================================== I M P L E M E N T A T I O N S ==  --
---
---  Elaboration
---     (neant - pas de pragma d'elaboration necessaire)
---
---  Algorithme
---     (neant)
---
---  Elements sensibles utilises
---     (neant)
---
---  Performances
---     (neant)
---
---  Autres informations
---     (neant)
---
---  ======================================================================  --
---
 
 package Databases.Select_Query is
 
