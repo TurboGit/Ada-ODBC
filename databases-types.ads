@@ -30,15 +30,18 @@ private package Databases.Types is
       end record;
 
    SQL_To_C : array (Data_Type) of Data_Values :=
-     (SQL_CHAR     => (Win32.SQL.SQL_C_CHAR,      Win32.SQL.SQL_CHAR),
-      SQL_VARCHAR  => (Win32.SQL.SQL_C_CHAR,      Win32.SQL.SQL_VARCHAR),
-      SQL_DATE     => (Win32.SQLEXT.SQL_C_DATE,   Win32.SQLEXT.SQL_DATE),
-      SQL_NUMERIC  => (Win32.SQL.SQL_C_CHAR,      Win32.SQL.SQL_NUMERIC),
-      SQL_DECIMAL  => (Win32.SQL.SQL_C_CHAR,      Win32.SQL.SQL_DECIMAL),
-      SQL_INTEGER  => (Win32.SQL.SQL_C_LONG,      Win32.SQL.SQL_INTEGER),
-      SQL_SMALLINT => (Win32.SQL.SQL_C_SHORT,     Win32.SQL.SQL_SMALLINT),
-      SQL_FLOAT    => (Win32.SQL.SQL_C_DOUBLE,    Win32.SQL.SQL_FLOAT),
-      SQL_DOUBLE   => (Win32.SQL.SQL_C_DOUBLE,    Win32.SQL.SQL_DOUBLE),
-      SQL_REAL     => (Win32.SQL.SQL_C_FLOAT,     Win32.SQL.SQL_REAL));
+     (SQL_CHAR      => (Win32.SQL.SQL_C_CHAR,      Win32.SQL.SQL_CHAR),
+      SQL_VARCHAR   => (Win32.SQL.SQL_C_CHAR,      Win32.SQL.SQL_VARCHAR),
+      SQL_DATE      => (Win32.SQLEXT.SQL_C_DATE,   Win32.SQLEXT.SQL_DATE),
+      SQL_TIME      => (Win32.SQLEXT.SQL_C_TIME,   Win32.SQLEXT.SQL_TIME),
+      SQL_TIMESTAMP => (Win32.SQLEXT.SQL_C_TIMESTAMP,
+                        Win32.SQLEXT.SQL_TIMESTAMP),
+      SQL_NUMERIC   => (Win32.SQL.SQL_C_CHAR,      Win32.SQL.SQL_NUMERIC),
+      SQL_DECIMAL   => (Win32.SQL.SQL_C_CHAR,      Win32.SQL.SQL_DECIMAL),
+      SQL_INTEGER   => (Win32.SQL.SQL_C_LONG,      Win32.SQL.SQL_INTEGER),
+      SQL_SMALLINT  => (Win32.SQL.SQL_C_SHORT,     Win32.SQL.SQL_SMALLINT),
+      SQL_FLOAT     => (Win32.SQL.SQL_C_DOUBLE,    Win32.SQL.SQL_FLOAT),
+      SQL_DOUBLE    => (Win32.SQL.SQL_C_DOUBLE,    Win32.SQL.SQL_DOUBLE),
+      SQL_REAL      => (Win32.SQL.SQL_C_FLOAT,     Win32.SQL.SQL_REAL));
 
 end Databases.Types;

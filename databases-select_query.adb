@@ -186,11 +186,53 @@ package body Databases.Select_Query is
 
          Max_Data_Length : constant := 10_000;
 
-         Tmp_String  : String (1 .. Max_Data_Length);
-         Tmp_Integer : Win32.Int;
-         Tmp_Float   : Win32.Float;
-         Tmp_Double  : Win32.Double;
-         Data_Length : aliased ODBC.SDWORD;
+         Tmp_String    : String (1 .. Max_Data_Length);
+         Tmp_Integer   : Win32.Int;
+         Tmp_Double    : Win32.Double;
+         Tmp_Date      : ODBC_EXT.DATE_STRUCT;
+         Tmp_Time      : ODBC_EXT.TIME_STRUCT;
+         Tmp_TimeStamp : ODBC_EXT.TIMESTAMP_STRUCT;
+         Data_Length   : aliased ODBC.SDWORD;
+
+         function Date_Image
+           (year : in ODBC.SWORD; month, day : in ODBC.UWORD) return String
+         is
+           use ODBC;
+           -- + 100: trick for obtaining 0x
+           sY : constant String:= SWORD'Image (year);
+           sM : constant String:= UWORD'Image (month + 100);
+           sD : constant String:= UWORD'Image (day + 100);
+         begin
+            return
+               sY( sY'Last-3 .. sY'Last ) & '-' &
+               sM( sM'Last-1 .. sM'Last ) & '-' &
+               sD( sD'Last-1 .. sD'Last );
+         end Date_image;
+
+         function Time_Image
+           (hour, minute, second : in ODBC.UWORD) return String
+         is
+           use ODBC;
+           -- + 100: trick for obtaining 0x
+           shr : constant String:= UWORD'Image (hour + 100);
+           smn : constant String:= UWORD'Image (minute + 100);
+           ssc : constant String:= UWORD'Image (second + 100);
+         begin
+            return
+               shr (shr'Last - 1 .. shr'Last) & ':' &
+               smn (smn'Last - 1 .. smn'Last) & ':' &
+               ssc (ssc'Last - 1 .. ssc'Last);
+         end Time_image;
+
+         function Millisecond_Image
+           (fraction : in ODBC.UDWORD) return String
+         is
+           use ODBC;
+           -- + 1000: trick for obtaining 0x
+           sfr : constant String := UDWORD'Image( fraction + 1000);
+         begin
+            return sfr (sfr'Last - 2 .. sfr'Last);
+         end Millisecond_image;
 
          procedure Check_Error is
          begin
@@ -275,7 +317,7 @@ package body Databases.Select_Query is
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                        (Tmp_String
-                           (Tmp_String'First .. Positive (Data_Length)));
+                           (Tmp_String'First .. Integer (Data_Length)));
 
                when ODBC.SQL_VARCHAR =>
                   RC := ODBC_EXT.SQLGetData
@@ -289,12 +331,67 @@ package body Databases.Select_Query is
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                        (Tmp_String
-                           (Tmp_String'First .. Positive (Data_Length)));
+                           (Tmp_String'First .. Integer (Data_Length)));
+
+               when ODBC_EXT.SQL_DATE =>
+                  RC := ODBC_EXT.SQLGetData
+                    (Context.DBC_Statement_Handle,
+                     ODBC.UWORD (Column),
+                     Types.SQL_To_C (SQL_DATE).C_Value,
+                     Tmp_Date'Address,
+                     0,
+                     Data_Length'Access);
+                  Check_Error;
+                  Context.Columns (Column).Value :=
+                    To_Unbounded_String
+                      (Date_image(Tmp_date.year,Tmp_date.month,Tmp_date.day));
+
+               when ODBC_EXT.SQL_TIME =>
+                  RC := ODBC_EXT.SQLGetData
+                    (Context.DBC_Statement_Handle,
+                     ODBC.UWORD (Column),
+                     Types.SQL_To_C (SQL_TIME).C_Value,
+                     Tmp_Time'Address,
+                     0,
+                     Data_Length'Access);
+                  Check_Error;
+                  Context.Columns (Column).Value :=
+                    To_Unbounded_String
+                      (Time_Image
+                        (Tmp_time.hour, Tmp_time.minute, Tmp_time.second));
+
+               when ODBC_EXT.SQL_TIMESTAMP =>
+                  RC := ODBC_EXT.SQLGetData
+                    (Context.DBC_Statement_Handle,
+                     ODBC.UWORD (Column),
+                     Types.SQL_To_C (SQL_TIMESTAMP).C_Value,
+                     Tmp_Timestamp'Address,
+                     0,
+                     Data_Length'Access);
+                  Check_Error;
+                  Context.Columns (Column).Value :=
+                    To_Unbounded_String
+                      (Date_Image(
+                          Tmp_timestamp.year,
+                          Tmp_timestamp.month,
+                          Tmp_timestamp.day)
+                       & ' ' &
+                       Time_image(
+                          Tmp_timestamp.hour,
+                          Tmp_timestamp.minute,
+                          Tmp_timestamp.second)
+                       & '.' &
+                       Millisecond_image(Tmp_timestamp.fraction)
+                      );
 
                when others =>
                   Ada.Exceptions.Raise_Exception
                     (Internal_Error_Data_Type_Not_Yet_Implemented'Identity,
-                     Message => "Data type not Yet Implemented.");
+                     Message =>
+                       "Data type number" &
+                       ODBC.SWORD'Image(Context.Columns (Column).Model) &
+                       " not Yet Implemented."
+                    );
 
             end case;
          end loop;
@@ -325,6 +422,17 @@ package body Databases.Select_Query is
    begin
       return Context.Columns'Length;
    end Number_Of_Columns;
+
+   --------------
+   -- Get_Name --
+   --------------
+
+   function Get_Name (Context : in Select_Datas;
+                      Column  : in Positive)
+                      return String is
+   begin
+      return To_String (Context.Columns (Column).Name);
+   end Get_Name;
 
    ---------------
    -- Get_Value --

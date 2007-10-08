@@ -61,6 +61,10 @@ package Databases.Select_Query is
                        Column  : in Positive)
                        return String;
 
+   function Get_Name (Context : in Select_Datas;
+                      Column  : in Positive)
+                      return String;
+
 private
 
    use Ada.Strings.Unbounded;

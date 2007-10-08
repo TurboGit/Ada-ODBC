@@ -132,7 +132,8 @@ package Databases is
 
    --  data type
 
-   type Data_Type is (SQL_CHAR, SQL_VARCHAR, SQL_DATE,
+   type Data_Type is (SQL_CHAR, SQL_VARCHAR,
+                      SQL_DATE, SQL_TIME, SQL_TIMESTAMP,
                       SQL_NUMERIC, SQL_DECIMAL, SQL_INTEGER, SQL_SMALLINT,
                       SQL_FLOAT, SQL_REAL, SQL_DOUBLE);
 

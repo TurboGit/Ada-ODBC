@@ -125,11 +125,23 @@ package body Databases is
                           Error_Message  => "Allocation Connection");
 
          --  connection
-         RC := ODBC.SQLConnect
-           (DB.DBC_Handle,
-            To_PUCHAR (DB.Driver (DB.Driver'First)'Address), Driver'Length,
-            To_PUCHAR (DB.UID (DB.UID'First)'Address), UID'Length,
-            To_PUCHAR (DB.PASSWD (DB.PASSWD'First)'Address), PASSWD'Length);
+         declare
+            UID_Addr    : Win32.PUCHAR := null;
+            PASSWD_Addr : Win32.PUCHAR := null;
+         begin
+            if DB.UID'Length /= 0 then
+               UID_Addr := To_PUCHAR (DB.UID (DB.UID'First)'Address);
+            end if;
+
+            if DB.PASSWD'Length /= 0 then
+               PASSWD_Addr := To_PUCHAR (DB.PASSWD (DB.PASSWD'First)'Address);
+            end if;
+
+            RC := ODBC.SQLConnect
+              (DB.DBC_Handle,
+               To_PUCHAR (DB.Driver (DB.Driver'First)'Address), Driver'Length,
+               UID_Addr, UID'Length, PASSWD_Addr, PASSWD'Length);
+         end;
 
          Check_SQL_Error (DB, RC,
                           Procedure_Name => "Connect",
