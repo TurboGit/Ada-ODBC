@@ -16,7 +16,7 @@ install:
 release:
 	-rm databases.tar*
 	tar cvf databases.tar databases.gpr src/databases*.ad[sb] \
-		demos/clients.mdb demos/clients.xls \
+		demos/clients.mdb demos/clients.xls makefile \
 		demos/demo*.adb demos/test_select.adb readme.txt
 	gzip -9 databases.tar
 
