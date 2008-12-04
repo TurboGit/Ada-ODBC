@@ -35,8 +35,9 @@ a Win32Ada function.
 
 These samples have been tested with GNAT GPL 2007.
 
-To compile the binding run the compile.bat batch.
+To compile the binding run:
 
+   $ make
 
 What's New
 ----------

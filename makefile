@@ -2,7 +2,7 @@
 INSTALL_DIR	=	$(HOME)/opt/SQL
 
 all:
-	gnat make -Pdatabases
+	gnat make -p -Pdatabases
 
 demos: all
 
