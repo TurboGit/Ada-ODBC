@@ -31,7 +31,7 @@ procedure Demo3 is
 begin
 
    Display ("Open...");
-   Databases.Connect (Clients, "Clients", "guest", "guest");
+   Databases.Connect (Clients, "Clients_DB", "guest", "guest");
 
    Display ("Auto commit off...");
    Databases.Transactions.Auto_Commit (Clients, Databases.Off);

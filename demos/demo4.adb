@@ -32,7 +32,7 @@ procedure Demo4 is
 begin
 
    Display ("Open...");
-   Databases.Connect (Clients, "Clients", "test", "test");
+   Databases.Connect (Clients, "Clients_DB", "test", "test");
 
    Display ("Execute Select...");
 
