@@ -34,7 +34,7 @@ begin
    Display ("Open...");
    Databases.Connect (Clients, "Clients_DB", "test", "test");
 
-   Display ("Bind columns...");
+   Display ("Bind columns directly to Ada variables...");
 
    Databases.Bind (Query, 1, "nom",
                    Nom (Nom'First)'Address, Nom'Length,
@@ -44,21 +44,22 @@ begin
                    Databases.SQL_CHAR);
    Databases.Bind (Query, 3, "age",
                    Age'Address, 0, Databases.SQL_INTEGER);
-   Databases.Query (Query, 1, Databases.Equal, "Obry");
 
    Display ("Select...");
+   -- This is equivalent to: select * from Clients where Nom = "Obry"
+   Databases.Query (Query, 1, Databases.Equal, "Obry");
    Databases.SQL_Select (Clients, Query, Table => "clients");
 
-   Display ("Get datas...");
+   Display ("Getting the data...");
    loop
       declare
         Found : Boolean;
       begin
-         Display ("Fetch...");
+         Display ("Fetching one data row, if any...");
          Databases.Fetch (Query, Found);
          exit when not Found;
 
-         Display ("datas :");
+         Display ("data :");
          Display (Nom (1 .. Databases.Last (Query, 1)));
          Display (Prenom (1 .. Databases.Last (Query, 2)));
          Display (Positive'Image (Age));
