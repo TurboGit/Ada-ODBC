@@ -70,6 +70,12 @@ demo4: another demo of SELECT statement, with retrieval of data
 demo5: another demo
 
 
+Tools
+-----
+
+record_generator: generates an Ada source snippet with a record type
+                  corresponding to a table's model (column names and types)
+
 Acknowledgment
 --------------
 

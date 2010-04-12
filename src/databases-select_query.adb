@@ -445,5 +445,46 @@ package body Databases.Select_Query is
       return To_String (Context.Columns (Column).Value);
    end Get_Value;
 
+   --------------------
+   -- Get_Model_Name --
+   --------------------
+
+   function Get_Model_Name (Context : in Select_Datas;
+                            Column  : in Positive)
+                            return String is
+   begin
+      case Context.Columns (Column).Model is
+         when ODBC.SQL_REAL =>
+            return "Float";
+         when ODBC.SQL_FLOAT =>
+            return "Long_Float"; -- double
+         when ODBC.SQL_INTEGER =>
+            return "Interfaces.Integer_32";
+         when ODBC.SQL_NUMERIC =>
+            return "Interfaces.Integer_32";
+         when ODBC.SQL_SMALLINT =>
+            return "Interfaces.Integer_16";
+         when ODBC.SQL_CHAR =>
+            return "Ada.Strings.Unbounded.Unbounded_String";
+         when ODBC.SQL_VARCHAR =>
+            return "Ada.Strings.Unbounded.Unbounded_String";
+         when ODBC_EXT.SQL_DATE =>
+            return "Ada.Calendar.Time";
+         when ODBC_EXT.SQL_TIME =>
+            return "Ada.Calendar.Day_Duration";
+         when ODBC_EXT.SQL_TIMESTAMP =>
+            return "Ada.Calendar.Time";
+
+         when others =>
+            Ada.Exceptions.Raise_Exception
+              (Internal_Error_Data_Type_Not_Yet_Implemented'Identity,
+               Message =>
+                 "Data type number " &
+                 ODBC.SWORD'Image(Context.Columns (Column).Model) &
+                 " not yet implemented."
+              );
+      end case;
+   end Get_Model_Name;
+
 end Databases.Select_Query;
 
