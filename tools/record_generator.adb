@@ -85,10 +85,9 @@ procedure Record_Generator is
       Databases.Connect (Clients, Driver, "", "");
       SQL.Execute (Clients, "select * from " & Table, Query);
 
-      loop
-         SQL.Fetch (Query, Found);
-         exit when not Found;
+      SQL.Fetch (Query, Found);
 
+      if Found then
          Text_IO.Put_Line (Blurb);
          Text_IO.Put_Line ("type " & Table & " is record");
 
@@ -108,8 +107,7 @@ procedure Record_Generator is
          end loop;
 
          Text_IO.Put_Line ("end record; -- " & Table);
-         exit; -- only one row is sufficient for that job!
-      end loop;
+      end if;
 
       Databases.Close (Clients);
 
