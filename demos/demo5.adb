@@ -29,7 +29,7 @@ procedure Demo5 is
 begin
 
    Display ("Open...");
-   Databases.Connect (Clients, "Clients", "guest", "guest");
+   Databases.Connect (Clients, "Clients_DB", "guest", "guest");
 
    Display ("Insert...");
    Databases.Parameter (Clients_Parameters,

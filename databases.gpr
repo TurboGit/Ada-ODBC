@@ -8,4 +8,6 @@ project Databases is
    for Main use ("demo.adb", "demo3.adb", "demo4.adb", "demo5.adb",
                  "test_select.adb");
 
+   for Exec_Dir use "bin";
+
 end Databases;
