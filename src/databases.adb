@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
---                                Database                                  --
+--                                Databases                                 --
 --                                                                          --
---                        Copyright (C) 1999-2007                           --
+--                        Copyright (C) 1999-2012                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -18,13 +18,10 @@
 --  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.       --
 ------------------------------------------------------------------------------
 
-with System.Address_To_Access_Conversions;
 with Interfaces.C;
 with Ada.Unchecked_Conversion;
 with Ada.Unchecked_Deallocation;
 with Ada.Exceptions;
-with Ada.Characters.Handling;
-with Ada.Strings.Unbounded;
 
 with Databases.Cursors;
 with Databases.SQL;
@@ -49,6 +46,7 @@ package body Databases is
       return String
    is
       RC            : ODBC.RETCODE;
+      pragma Unreferenced (RC);
       SQL_State     : Interfaces.C.Char_Array (1 .. 10);
       Error_Code    : aliased ODBC.SDWORD;
       Error_Message : String (1 .. 500);
@@ -156,6 +154,7 @@ package body Databases is
    procedure Close (DB : in out Database)
    is
       RC : ODBC.RETCODE;
+      pragma Unreferenced (RC);
    begin
       RC := ODBC.SQLDisconnect  (DB.DBC_Handle);
       RC := ODBC.SQLFreeConnect (DB.DBC_Handle);
@@ -302,8 +301,6 @@ package body Databases is
                             return String
    is
 
-      use Ada.Strings.Unbounded;
-
       Fields     : Unbounded_String;
       Conditions : Unbounded_String;
 
@@ -439,8 +436,7 @@ package body Databases is
             RC := ODBC.SQLBindCol
               (Query.DBC_Statement_Handle,
                ODBC.UWORD (Column),
-               ODBC.SWORD (Types.SQL_TO_C (Query.Fields (Column).Data_Model)
-                           .SQL_Value),
+               Types.SQL_TO_C (Query.Fields (Column).Data_Model).SQL_Value,
                Query.Fields (Column).Address,
                Query.Fields (Column).Size,
                Query.Fields (Column).Last'Access);
@@ -515,7 +511,8 @@ package body Databases is
                       Parameters : in Parameter_Set := No_Parameter)
    is
       DBC_Statement_Handle : aliased ODBC.HSTMT;
-      RC                   : ODBC.RETCODE;
+      RC, RC2                   : ODBC.RETCODE;
+      pragma Unreferenced (RC2);
       Tmp_Params           : Parameter_Array := Parameters.Parameters;
    begin
       RC := ODBC.SQLAllocStmt (DB.DBC_Handle,
@@ -581,7 +578,7 @@ package body Databases is
             Statement_Handle => DBC_Statement_Handle);
       end if;
 
-      RC := ODBC.SQLFreeStmt (DBC_Statement_Handle, 0);
+      RC2 := ODBC.SQLFreeStmt (DBC_Statement_Handle, 0);
    end Execute;
 
 

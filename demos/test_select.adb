@@ -1,10 +1,7 @@
--- Modified from demo4
-
 with Ada.Text_IO;
 with Ada.Exceptions;
 
 with Databases.Select_Query;
-with Databases.SQL;
 
 procedure Test_Select is
 
@@ -19,7 +16,7 @@ procedure Test_Select is
    Clients : Databases.Database;
    Query   : SQL_Select.Select_Datas;
 
-   Driver  : constant String:= "PM_test 678";
+   Driver  : constant String:= "PM_test 909";
 
 begin
 

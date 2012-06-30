@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
---                                Database                                  --
+--                            Databases.Cursors                             --
 --                                                                          --
---                        Copyright (C) 19999-2007                           --
+--                        Copyright (C) 1999-2012                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -27,7 +27,7 @@ package body Databases.Cursors is
 
    Cursor_ID : Natural := 0;
 
-   Space_To_0 : Strings.Maps.Character_Mapping
+   Space_To_0 : constant Strings.Maps.Character_Mapping
               := Strings.Maps.To_Mapping (" ", "0");
 
    ------------

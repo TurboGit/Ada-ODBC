@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
---                                Database                                  --
+--                         Databases.Select_Query                           --
 --                                                                          --
---                        Copyright (C) 1999-2007                           --
+--                        Copyright (C) 1999-2012                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -70,8 +70,6 @@ package Databases.Select_Query is
                             return String;
 
 private
-
-   use Ada.Strings.Unbounded;
 
    type Column_Datas is
       record
