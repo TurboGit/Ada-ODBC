@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Databases                                 --
 --                                                                          --
---                        Copyright (C) 1999-2012                           --
+--                        Copyright (C) 1999-2016                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -50,7 +50,7 @@ package body Databases is
       SQL_State     : Interfaces.C.Char_Array (1 .. 10);
       Error_Code    : aliased ODBC.SDWORD;
       Error_Message : String (1 .. 500);
-      Last          : aliased ODBC.SWORD;
+      Last          : aliased ODBC.SWORD := 0;
       use type System.Address;
    begin
       RC := ODBC.SQLError (DB.DBC_Environment_Handle,
@@ -63,7 +63,8 @@ package body Databases is
                            ODBC.SWORD (Error_Message'Length),
                            Last'Access);
       return "(" & Interfaces.C.To_Ada (SQL_State) & ") " &
-        Error_Message (Error_Message'First .. Natural (Last));
+        Error_Message
+          (Error_Message'First .. Natural (ODBC.SWORD'Max (0, Last)));
    end SQL_Error_Message;
 
 
