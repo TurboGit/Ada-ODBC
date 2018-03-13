@@ -14,7 +14,7 @@ procedure Test_Select is
    end Display;
 
    Clients : Databases.Database;
-   Query   : SQL_Select.Select_Datas;
+   Query   : SQL_Select.Select_Data;
 
    Driver  : constant String:= "PM_test 909";
 

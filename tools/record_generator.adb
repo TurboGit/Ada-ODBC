@@ -23,7 +23,7 @@ procedure Record_Generator is
    package SQL renames Databases.Select_Query;
 
    Clients : Databases.Database;
-   Query   : SQL.Select_Datas;
+   Query   : SQL.Select_Data;
 
    --------------
    -- Generate --

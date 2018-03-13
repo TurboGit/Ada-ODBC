@@ -37,7 +37,7 @@ package body Databases.Select_Query is
 
    procedure Execute (DB         : in      Database;
                       Statement  : in      String;
-                      Context    :    out  Select_Datas;
+                      Context    :    out  Select_Data;
                       Parameters : in      Parameter_Set    := No_Parameter;
                       Cursor     : in      Databases.Cursor := No_Cursor)
    is
@@ -98,7 +98,7 @@ package body Databases.Select_Query is
 
          for Parameter_Number in 1 .. Parameters.N loop
             declare
-               Parameter : Parameter_Datas
+               Parameter : Parameter_Data
                  := Parameters.Parameters (Parameter_Number);
             begin
                RC := ODBC_EXT.SQLBindParameter
@@ -130,8 +130,7 @@ package body Databases.Select_Query is
             Statement_Handle => Context.DBC_Statement_Handle);
       end if;
 
-
-      Build_Context_Datas :
+      Build_Context_Data :
       declare
          Max_Name_Length : constant := 200;
          Number_Columns  : aliased ODBC.SWORD;
@@ -149,8 +148,7 @@ package body Databases.Select_Query is
             Statement_Handle => Context.DBC_Statement_Handle);
 
          Context.Columns :=
-          new Columns_Datas (1 .. Positive (Number_Columns));
-
+          new Columns_Data (1 .. Positive (Number_Columns));
 
          for Column in 1 .. Positive (Number_Columns) loop
             RC := ODBC.SQLDescribeCol
@@ -168,7 +166,7 @@ package body Databases.Select_Query is
               (Column_Name (Column_Name'First .. Natural (Name_Length)));
          end loop;
 
-      end Build_Context_Datas;
+      end Build_Context_Data;
 
    end Execute;
 
@@ -176,13 +174,13 @@ package body Databases.Select_Query is
    -- Fetch --
    -----------
 
-   procedure Fetch (Context : in     Select_Datas;
+   procedure Fetch (Context : in     Select_Data;
                     Found   :    out Boolean)
    is
       use type ODBC.RETCODE;
       RC : ODBC.RETCODE;
 
-      procedure Get_Columns_Datas is
+      procedure Get_Columns_Data is
 
          Max_Data_Length : constant := 10_000;
 
@@ -238,7 +236,7 @@ package body Databases.Select_Query is
          begin
             Check_SQL_Error
               (Context.Base, RC,
-               Procedure_Name   => "Get_Columns_Datas",
+               Procedure_Name   => "Get_Columns_Data",
                Error_Message    => "Error on SQLGetData",
                Statement_Handle => Context.DBC_Statement_Handle);
          end Check_Error;
@@ -395,7 +393,7 @@ package body Databases.Select_Query is
 
             end case;
          end loop;
-      end Get_Columns_Datas;
+      end Get_Columns_Data;
 
    begin --  Fetch
       RC := ODBC.SQLFetch (Context.DBC_Statement_Handle);
@@ -409,7 +407,7 @@ package body Databases.Select_Query is
                           Procedure_Name   => "Fetch",
                           Error_Message    => "Fetch error",
                           Statement_Handle => Context.DBC_Statement_Handle);
-         Get_Columns_Datas;
+         Get_Columns_Data;
       end if;
    end Fetch;
 
@@ -417,7 +415,7 @@ package body Databases.Select_Query is
    -- Number_Of_Columns --
    -----------------------
 
-   function Number_Of_Columns (Context : in Select_Datas)
+   function Number_Of_Columns (Context : in Select_Data)
                                return Positive is
    begin
       return Context.Columns'Length;
@@ -427,7 +425,7 @@ package body Databases.Select_Query is
    -- Get_Name --
    --------------
 
-   function Get_Name (Context : in Select_Datas;
+   function Get_Name (Context : in Select_Data;
                       Column  : in Positive)
                       return String is
    begin
@@ -438,7 +436,7 @@ package body Databases.Select_Query is
    -- Get_Value --
    ---------------
 
-   function Get_Value (Context : in Select_Datas;
+   function Get_Value (Context : in Select_Data;
                        Column  : in Positive)
                        return String is
    begin
@@ -449,7 +447,7 @@ package body Databases.Select_Query is
    -- Get_Model_Name --
    --------------------
 
-   function Get_Model_Name (Context : in Select_Datas;
+   function Get_Model_Name (Context : in Select_Data;
                             Column  : in Positive)
                             return String is
    begin

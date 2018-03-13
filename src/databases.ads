@@ -244,7 +244,7 @@ private
          Driver, UID, PASSWD    : String_Access;
       end record;
 
-   type Field_Datas is
+   type Field_Data is
       record
          Name        : Unbounded_String;
          Data_Model  : Data_Type;
@@ -255,7 +255,7 @@ private
          Last        : aliased ODBC.SDWORD;
       end record;
 
-   type Fields_Array is array (Column_Number range <>) of Field_Datas;
+   type Fields_Array is array (Column_Number range <>) of Field_Data;
 
    type DB_Access is access Database;
 
@@ -274,7 +274,7 @@ private
 
    -------------------------------------------------------------------------
 
-   type Parameter_Datas is
+   type Parameter_Data is
       record
          Mode        : ODBC.SWORD;
          Data_Model  : Data_Type;
@@ -283,7 +283,7 @@ private
          Last        : aliased ODBC.SDWORD;
       end record;
 
-   type Parameter_Array is array (Column_Number range <>) of Parameter_Datas;
+   type Parameter_Array is array (Column_Number range <>) of Parameter_Data;
 
    type Parameter_Set (N : Column_Number) is
       record
