@@ -50,7 +50,6 @@ begin
                       "insert into clients " &
                       "values ('N4444', 'P4444', 40)");
 
-
    Display ("Rollback...");
    Databases.Transactions.Rollback (Clients);
 

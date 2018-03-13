@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Databases                                 --
 --                                                                          --
---                        Copyright (C) 1999-2012                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -129,7 +129,6 @@ package Databases is
    SQL_Error       : exception;
    Data_Type_Error : exception;
 
-
    --  data type
 
    type Data_Type is (SQL_CHAR, SQL_VARCHAR,
@@ -153,7 +152,6 @@ package Databases is
    procedure Connect (DB : in out Database; Driver, UID, PASSWD : in String);
    procedure Close   (DB : in out Database);
 
-
    --  -----------------------------------------------------------------  --
    --  Columns binding
 
@@ -175,7 +173,6 @@ package Databases is
 
    procedure Reset_Select (Query : in out Select_Statement);
 
-
    --  -----------------------------------------------------------------  --
    --  Accessors
 
@@ -190,7 +187,6 @@ package Databases is
    function Last (Query  : in Select_Statement;
                   Column : in Column_Number)
                   return Natural;
-
 
    --  -----------------------------------------------------------------  --
    --  Actions

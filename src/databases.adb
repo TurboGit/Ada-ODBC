@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Databases                                 --
 --                                                                          --
---                        Copyright (C) 1999-2016                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -67,7 +67,6 @@ package body Databases is
           (Error_Message'First .. Natural (ODBC.SWORD'Max (0, Last)));
    end SQL_Error_Message;
 
-
    ---------------------
    -- Check_SQL_Error --
    ---------------------
@@ -90,7 +89,6 @@ package body Databases is
             SQL_Error_Message (DB, Statement_Handle));
       end if;
    end Check_SQL_Error;
-
 
    -------------
    -- Connect --
@@ -166,7 +164,6 @@ package body Databases is
       Free (DB.PASSWD);
    end Close;
 
-
    ----------------
    -- Is_Defined --
    ----------------
@@ -177,7 +174,6 @@ package body Databases is
    begin
      return Query.Fields (Column).Name /= Null_Unbounded_String;
    end Is_Defined;
-
 
    ----------
    -- Bind --
@@ -210,7 +206,6 @@ package body Databases is
       end case;
    end Bind;
 
-
    -----------
    -- Query --
    -----------
@@ -224,7 +219,6 @@ package body Databases is
       Query.Fields (Column).Operator    := Operator;
       Query.Fields (Column).Query_Value := To_Unbounded_String (Value);
    end Query;
-
 
    -----------
    -- Query --
@@ -243,7 +237,6 @@ package body Databases is
       end if;
    end Query;
 
-
    ------------------
    -- Reset_Select --
    ------------------
@@ -252,7 +245,6 @@ package body Databases is
    begin
       Free (Query.SQL);
    end Reset_Select;
-
 
    ----------
    -- Name --
@@ -266,7 +258,6 @@ package body Databases is
       return To_String (Query.Fields (Column).Name);
    end Name;
 
-
    -----------------
    -- Query_Value --
    -----------------
@@ -279,7 +270,6 @@ package body Databases is
       return To_String (Query.Fields (Column).Query_Value);
    end Query_Value;
 
-
    ----------
    -- Last --
    ----------
@@ -291,7 +281,6 @@ package body Databases is
    begin
       return Natural (Query.Fields (Column).Last);
    end Last;
-
 
    --------------------
    -- Get_SQL_Select --
@@ -381,7 +370,6 @@ package body Databases is
       end;
    end Get_SQL_Select;
 
-
    ----------------
    -- SQL_Select --
    ----------------
@@ -456,7 +444,6 @@ package body Databases is
                        Statement_Handle => Query.DBC_Statement_Handle);
    end SQL_Select;
 
-
    -----------
    -- Fetch --
    -----------
@@ -481,7 +468,6 @@ package body Databases is
       end if;
    end Fetch;
 
-
    ---------------
    -- Parameter --
    ---------------
@@ -501,7 +487,6 @@ package body Databases is
          Size       => ODBC.SDWORD (Size),
          Last       => ODBC.SDWORD (Size));
    end Parameter;
-
 
    -------------
    -- Execute --
@@ -581,7 +566,6 @@ package body Databases is
 
       RC2 := ODBC.SQLFreeStmt (DBC_Statement_Handle, 0);
    end Execute;
-
 
    ----------
    -- Free --

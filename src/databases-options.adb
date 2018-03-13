@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Database                                  --
 --                                                                          --
---                        Copyright (C) 1999-2007                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -38,7 +38,6 @@ package body Databases.Options is
                        Statement_Handle => Query.DBC_Statement_Handle);
    end Set;
 
-
    ---------
    -- Set --
    ---------
@@ -56,7 +55,6 @@ package body Databases.Options is
                        Procedure_Name   => "Set (DB)");
    end Set;
 
-
    ---------
    -- Set --
    ---------
@@ -69,4 +67,3 @@ package body Databases.Options is
    end Set;
 
 end Databases.Options;
-
