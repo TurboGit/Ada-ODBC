@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Databases                                 --
 --                                                                          --
---                        Copyright (C) 1999-2012                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -17,6 +17,9 @@
 --  along with this library; if not, write to the Free Software Foundation, --
 --  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.       --
 ------------------------------------------------------------------------------
+--
+--  NB: a recent version of Databases may be located
+--      here: https://github.com/TurboGit/Ada-ODBC
 --
 --     *** Constructors / Destructors
 --
@@ -96,8 +99,8 @@
 --        => SQL_Error
 
 with Ada.Strings.Unbounded;
-with Win32.SQL;
-with Win32.SQLExt;
+with Win32.Sql;
+with Win32.Sqlext;
 
 with System;
 
@@ -129,7 +132,6 @@ package Databases is
    SQL_Error       : exception;
    Data_Type_Error : exception;
 
-
    --  data type
 
    type Data_Type is (SQL_CHAR, SQL_VARCHAR,
@@ -144,15 +146,14 @@ package Databases is
          Day   : Short_Integer;
       end record;
 
-   SQL_PARAM_INPUT  : constant := Win32.SQLEXT.SQL_PARAM_INPUT;
-   SQL_PARAM_OUTPUT : constant := Win32.SQLEXT.SQL_PARAM_OUTPUT;
+   SQL_PARAM_INPUT  : constant := Win32.Sqlext.SQL_PARAM_INPUT;
+   SQL_PARAM_OUTPUT : constant := Win32.Sqlext.SQL_PARAM_OUTPUT;
 
    --  -----------------------------------------------------------------  --
    --  Connect-Open / Close
 
    procedure Connect (DB : in out Database; Driver, UID, PASSWD : in String);
    procedure Close   (DB : in out Database);
-
 
    --  -----------------------------------------------------------------  --
    --  Columns binding
@@ -175,7 +176,6 @@ package Databases is
 
    procedure Reset_Select (Query : in out Select_Statement);
 
-
    --  -----------------------------------------------------------------  --
    --  Accessors
 
@@ -190,7 +190,6 @@ package Databases is
    function Last (Query  : in Select_Statement;
                   Column : in Column_Number)
                   return Natural;
-
 
    --  -----------------------------------------------------------------  --
    --  Actions
@@ -222,8 +221,8 @@ package Databases is
 
 private
 
-   package ODBC     renames Win32.SQL;
-   package ODBC_EXT renames Win32.SQLExt;
+   package ODBC     renames Win32.Sql;
+   package ODBC_EXT renames Win32.Sqlext;
 
    procedure Check_SQL_Error (DB               : in Database;
                               RC               : in ODBC.RETCODE;
@@ -244,7 +243,7 @@ private
          Driver, UID, PASSWD    : String_Access;
       end record;
 
-   type Field_Datas is
+   type Field_Data is
       record
          Name        : Unbounded_String;
          Data_Model  : Data_Type;
@@ -255,7 +254,7 @@ private
          Last        : aliased ODBC.SDWORD;
       end record;
 
-   type Fields_Array is array (Column_Number range <>) of Field_Datas;
+   type Fields_Array is array (Column_Number range <>) of Field_Data;
 
    type DB_Access is access Database;
 
@@ -274,7 +273,7 @@ private
 
    -------------------------------------------------------------------------
 
-   type Parameter_Datas is
+   type Parameter_Data is
       record
          Mode        : ODBC.SWORD;
          Data_Model  : Data_Type;
@@ -283,7 +282,7 @@ private
          Last        : aliased ODBC.SDWORD;
       end record;
 
-   type Parameter_Array is array (Column_Number range <>) of Parameter_Datas;
+   type Parameter_Array is array (Column_Number range <>) of Parameter_Data;
 
    type Parameter_Set (N : Column_Number) is
       record

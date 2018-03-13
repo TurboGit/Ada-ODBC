@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Database                                  --
 --                                                                          --
---                        Copyright (C) 1999-2007                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -31,13 +31,12 @@ package body Databases.Options is
       RC : ODBC.RETCODE;
    begin
       RC := ODBC_EXT.SQLSetStmtOption (Query.DBC_Statement_Handle,
-                                       Win32.SQL.UWORD (Option),
-                                       Win32.SQL.UDWORD (Value));
+                                       Win32.Sql.UWORD (Option),
+                                       Win32.Sql.UDWORD (Value));
       Check_SQL_Error (Query.Base, RC,
                        Procedure_Name   => "Set (Query)",
                        Statement_Handle => Query.DBC_Statement_Handle);
    end Set;
-
 
    ---------
    -- Set --
@@ -50,12 +49,11 @@ package body Databases.Options is
       RC : ODBC.RETCODE;
    begin
       RC := ODBC_EXT.SQLSetConnectOption (DB.DBC_Handle,
-                                          Win32.SQL.UWORD (Option),
-                                          Win32.SQL.UDWORD (Value));
+                                          Win32.Sql.UWORD (Option),
+                                          Win32.Sql.UDWORD (Value));
       Check_SQL_Error (DB, RC,
                        Procedure_Name   => "Set (DB)");
    end Set;
-
 
    ---------
    -- Set --
@@ -69,4 +67,3 @@ package body Databases.Options is
    end Set;
 
 end Databases.Options;
-

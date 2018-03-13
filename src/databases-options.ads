@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Database                                  --
 --                                                                          --
---                        Copyright (C) 1999-2007                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -41,7 +41,6 @@ package Databases.Options is
    procedure Set (DB     : in Database;
                   Option : in Natural;
                   Value  : in Natural);
-
 
    --  Query options
 

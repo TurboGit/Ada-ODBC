@@ -11,8 +11,8 @@ installed to your computer to use it.
 The database used by these samples is very simple but you must create it
 to run the samples. I have used Microsoft ACCESS, Excel and a Text file
 to test all these samples. It has also been tested on
- - Windows: XP, Server 2003, Vista
- - SQL Server: 2000 and 2005; Access: 2002, 2007
+ - Windows: XP, Server 2003, Vista, 7
+ - SQL Server: 2000, 2005, 2008, 2014; Access: 2002, 2007
 
 Here is the database structure :
 
@@ -25,6 +25,9 @@ Database name : Clients
 
 After creating the database you must connect it with the ODBC driver under
 the "Control Panel" (Panneau de Configuration), then "Administrative Tools".
+A shortcut to the ODBC configuration dialog is to start from cmd, or from
+the start menu, or with Windows Key+R, the program: odbcad32.exe.
+
 I have included an ACCESS (clients.mdb) and an Excel (clients.xls) databases.
 In the tab "User DSN" (could be also System of File DSN), click the "Add"
 button, select the "Microsoft Access Driver (*.mdb)" choice,

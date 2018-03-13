@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                         Databases.Select_Query                           --
 --                                                                          --
---                        Copyright (C) 1999-2012                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -37,7 +37,7 @@ package body Databases.Select_Query is
 
    procedure Execute (DB         : in      Database;
                       Statement  : in      String;
-                      Context    :    out  Select_Datas;
+                      Context    :    out  Select_Data;
                       Parameters : in      Parameter_Set    := No_Parameter;
                       Cursor     : in      Databases.Cursor := No_Cursor)
    is
@@ -98,7 +98,7 @@ package body Databases.Select_Query is
 
          for Parameter_Number in 1 .. Parameters.N loop
             declare
-               Parameter : Parameter_Datas
+               Parameter : Parameter_Data
                  := Parameters.Parameters (Parameter_Number);
             begin
                RC := ODBC_EXT.SQLBindParameter
@@ -130,8 +130,7 @@ package body Databases.Select_Query is
             Statement_Handle => Context.DBC_Statement_Handle);
       end if;
 
-
-      Build_Context_Datas :
+      Build_Context_Data :
       declare
          Max_Name_Length : constant := 200;
          Number_Columns  : aliased ODBC.SWORD;
@@ -149,8 +148,7 @@ package body Databases.Select_Query is
             Statement_Handle => Context.DBC_Statement_Handle);
 
          Context.Columns :=
-          new Columns_Datas (1 .. Positive (Number_Columns));
-
+          new Columns_Data (1 .. Positive (Number_Columns));
 
          for Column in 1 .. Positive (Number_Columns) loop
             RC := ODBC.SQLDescribeCol
@@ -168,7 +166,7 @@ package body Databases.Select_Query is
               (Column_Name (Column_Name'First .. Natural (Name_Length)));
          end loop;
 
-      end Build_Context_Datas;
+      end Build_Context_Data;
 
    end Execute;
 
@@ -176,19 +174,19 @@ package body Databases.Select_Query is
    -- Fetch --
    -----------
 
-   procedure Fetch (Context : in     Select_Datas;
+   procedure Fetch (Context : in     Select_Data;
                     Found   :    out Boolean)
    is
       use type ODBC.RETCODE;
       RC : ODBC.RETCODE;
 
-      procedure Get_Columns_Datas is
+      procedure Get_Columns_Data is
 
          Max_Data_Length : constant := 10_000;
 
          Tmp_String    : String (1 .. Max_Data_Length);
-         Tmp_Integer   : Win32.Int;
-         Tmp_Double    : Win32.Double;
+         Tmp_Integer   : Win32.INT;
+         Tmp_Double    : Win32.DOUBLE;
          Tmp_Date      : ODBC_EXT.DATE_STRUCT;
          Tmp_Time      : ODBC_EXT.TIME_STRUCT;
          Tmp_TimeStamp : ODBC_EXT.TIMESTAMP_STRUCT;
@@ -207,7 +205,7 @@ package body Databases.Select_Query is
                sY( sY'Last-3 .. sY'Last ) & '-' &
                sM( sM'Last-1 .. sM'Last ) & '-' &
                sD( sD'Last-1 .. sD'Last );
-         end Date_image;
+         end Date_Image;
 
          function Time_Image
            (hour, minute, second : in ODBC.UWORD) return String
@@ -222,7 +220,7 @@ package body Databases.Select_Query is
                shr (shr'Last - 1 .. shr'Last) & ':' &
                smn (smn'Last - 1 .. smn'Last) & ':' &
                ssc (ssc'Last - 1 .. ssc'Last);
-         end Time_image;
+         end Time_Image;
 
          function Millisecond_Image
            (fraction : in ODBC.UDWORD) return String
@@ -232,13 +230,13 @@ package body Databases.Select_Query is
            sfr : constant String := UDWORD'Image( fraction + 1000);
          begin
             return sfr (sfr'Last - 2 .. sfr'Last);
-         end Millisecond_image;
+         end Millisecond_Image;
 
          procedure Check_Error is
          begin
             Check_SQL_Error
               (Context.Base, RC,
-               Procedure_Name   => "Get_Columns_Datas",
+               Procedure_Name   => "Get_Columns_Data",
                Error_Message    => "Error on SQLGetData",
                Statement_Handle => Context.DBC_Statement_Handle);
          end Check_Error;
@@ -344,7 +342,7 @@ package body Databases.Select_Query is
                   Check_Error;
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
-                      (Date_image(Tmp_date.year,Tmp_date.month,Tmp_date.day));
+                      (Date_Image(Tmp_Date.year,Tmp_Date.month,Tmp_Date.day));
 
                when ODBC_EXT.SQL_TIME =>
                   RC := ODBC_EXT.SQLGetData
@@ -358,30 +356,30 @@ package body Databases.Select_Query is
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                       (Time_Image
-                        (Tmp_time.hour, Tmp_time.minute, Tmp_time.second));
+                        (Tmp_Time.hour, Tmp_Time.minute, Tmp_Time.second));
 
                when ODBC_EXT.SQL_TIMESTAMP =>
                   RC := ODBC_EXT.SQLGetData
                     (Context.DBC_Statement_Handle,
                      ODBC.UWORD (Column),
                      Types.SQL_To_C (SQL_TIMESTAMP).C_Value,
-                     Tmp_Timestamp'Address,
+                     Tmp_TimeStamp'Address,
                      0,
                      Data_Length'Access);
                   Check_Error;
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                       (Date_Image(
-                          Tmp_timestamp.year,
-                          Tmp_timestamp.month,
-                          Tmp_timestamp.day)
+                          Tmp_TimeStamp.year,
+                          Tmp_TimeStamp.month,
+                          Tmp_TimeStamp.day)
                        & ' ' &
-                       Time_image(
-                          Tmp_timestamp.hour,
-                          Tmp_timestamp.minute,
-                          Tmp_timestamp.second)
+                       Time_Image(
+                          Tmp_TimeStamp.hour,
+                          Tmp_TimeStamp.minute,
+                          Tmp_TimeStamp.second)
                        & '.' &
-                       Millisecond_image(Tmp_timestamp.fraction)
+                       Millisecond_Image(Tmp_TimeStamp.fraction)
                       );
 
                when others =>
@@ -395,7 +393,7 @@ package body Databases.Select_Query is
 
             end case;
          end loop;
-      end Get_Columns_Datas;
+      end Get_Columns_Data;
 
    begin --  Fetch
       RC := ODBC.SQLFetch (Context.DBC_Statement_Handle);
@@ -409,7 +407,7 @@ package body Databases.Select_Query is
                           Procedure_Name   => "Fetch",
                           Error_Message    => "Fetch error",
                           Statement_Handle => Context.DBC_Statement_Handle);
-         Get_Columns_Datas;
+         Get_Columns_Data;
       end if;
    end Fetch;
 
@@ -417,7 +415,7 @@ package body Databases.Select_Query is
    -- Number_Of_Columns --
    -----------------------
 
-   function Number_Of_Columns (Context : in Select_Datas)
+   function Number_Of_Columns (Context : in Select_Data)
                                return Positive is
    begin
       return Context.Columns'Length;
@@ -427,7 +425,7 @@ package body Databases.Select_Query is
    -- Get_Name --
    --------------
 
-   function Get_Name (Context : in Select_Datas;
+   function Get_Name (Context : in Select_Data;
                       Column  : in Positive)
                       return String is
    begin
@@ -438,7 +436,7 @@ package body Databases.Select_Query is
    -- Get_Value --
    ---------------
 
-   function Get_Value (Context : in Select_Datas;
+   function Get_Value (Context : in Select_Data;
                        Column  : in Positive)
                        return String is
    begin
@@ -449,7 +447,7 @@ package body Databases.Select_Query is
    -- Get_Model_Name --
    --------------------
 
-   function Get_Model_Name (Context : in Select_Datas;
+   function Get_Model_Name (Context : in Select_Data;
                             Column  : in Positive)
                             return String is
    begin
@@ -486,5 +484,27 @@ package body Databases.Select_Query is
       end case;
    end Get_Model_Name;
 
-end Databases.Select_Query;
+   ------------------
+   -- Simple_Query --
+   ------------------
 
+   function Simple_Query (Query, Driver, UID, PASSWD : in String) return String is
+      DB         : Databases.Database;
+      Query_data : Select_Data;
+      Found      : Boolean;
+   begin
+      Connect (DB, Driver, UID, PASSWD);
+      Execute (DB, Query, Query_data);
+      Fetch (Query_data, Found);
+
+      if Found then
+         return Get_Value (Query_data, 1);
+      else
+         return "";
+      end if;
+   exception
+      when others =>
+         return "";
+   end Simple_Query;
+
+end Databases.Select_Query;

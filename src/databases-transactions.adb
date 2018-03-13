@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Database                                  --
 --                                                                          --
---                        Copyright (C) 1999-2007                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -40,7 +40,6 @@ package body Databases.Transactions is
       end if;
    end Auto_Commit;
 
-
    ------------
    -- Commit --
    ------------
@@ -53,7 +52,6 @@ package body Databases.Transactions is
                               ODBC.SQL_COMMIT);
       Check_SQL_Error (DB, RC, Procedure_Name => "Commit");
    end Commit;
-
 
    --------------
    -- Rollback --

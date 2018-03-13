@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                         Databases.Select_Query                           --
 --                                                                          --
---                        Copyright (C) 1999-2012                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -43,50 +43,54 @@
 
 package Databases.Select_Query is
 
-   type Select_Datas is private;
+   type Select_Data is private;
 
    procedure Execute (DB         : in     Database;
                       Statement  : in     String;
-                      Context    :    out Select_Datas;
+                      Context    :    out Select_Data;
                       Parameters : in     Parameter_Set    := No_Parameter;
                       Cursor     : in     Databases.Cursor := No_Cursor);
 
-   procedure Fetch (Context : in     Select_Datas;
+   procedure Fetch (Context : in     Select_Data;
                     Found   :    out Boolean);
 
-   function Number_Of_Columns (Context : in Select_Datas)
+   function Number_Of_Columns (Context : in Select_Data)
                                return Positive;
 
-   function Get_Value (Context : in Select_Datas;
+   function Get_Value (Context : in Select_Data;
                        Column  : in Positive)
                        return String;
 
-   function Get_Name (Context : in Select_Datas;
+   function Get_Name (Context : in Select_Data;
                       Column  : in Positive)
                       return String;
 
-   function Get_Model_Name (Context : in Select_Datas;
+   function Get_Model_Name (Context : in Select_Data;
                             Column  : in Positive)
                             return String;
 
+   function Simple_Query
+     (Query, Driver, UID, PASSWD : in String) return String;
+   --  Returns an atomic information from a database, that is
+   --  the first element (first column of first row) of a query's result
+
 private
 
-   type Column_Datas is
+   type Column_Data is
       record
          Name  : Unbounded_String;
          Value : Unbounded_String;
          Model : aliased ODBC.SWORD;
       end record;
-   type Columns_Datas is array (Positive range <>) of Column_Datas;
-   type Columns_Datas_Access is access Columns_Datas;
+   type Columns_Data is array (Positive range <>) of Column_Data;
+   type Columns_Data_Access is access Columns_Data;
 
-   type Select_Datas is
+   type Select_Data is
       record
          Base                 : Database;
          DBC_Statement_Handle : aliased ODBC.HSTMT;
-         Columns              : Columns_Datas_Access;
+         Columns              : Columns_Data_Access;
          SQL                  : String_Access;
       end record;
 
 end Databases.Select_Query;
-

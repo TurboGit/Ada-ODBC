@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Databases                                 --
 --                                                                          --
---                        Copyright (C) 1999-2016                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -29,7 +29,7 @@ with Databases.Types;
 
 package body Databases is
 
-   pragma linker_Options ("-lodbc32");
+   pragma Linker_Options ("-lodbc32");
 
    procedure Free is new Ada.Unchecked_Deallocation (String, String_Access);
 
@@ -47,7 +47,7 @@ package body Databases is
    is
       RC            : ODBC.RETCODE;
       pragma Unreferenced (RC);
-      SQL_State     : Interfaces.C.Char_Array (1 .. 10);
+      SQL_State     : Interfaces.C.char_array (1 .. 10);
       Error_Code    : aliased ODBC.SDWORD;
       Error_Message : String (1 .. 500);
       Last          : aliased ODBC.SWORD := 0;
@@ -66,7 +66,6 @@ package body Databases is
         Error_Message
           (Error_Message'First .. Natural (ODBC.SWORD'Max (0, Last)));
    end SQL_Error_Message;
-
 
    ---------------------
    -- Check_SQL_Error --
@@ -90,7 +89,6 @@ package body Databases is
             SQL_Error_Message (DB, Statement_Handle));
       end if;
    end Check_SQL_Error;
-
 
    -------------
    -- Connect --
@@ -166,7 +164,6 @@ package body Databases is
       Free (DB.PASSWD);
    end Close;
 
-
    ----------------
    -- Is_Defined --
    ----------------
@@ -177,7 +174,6 @@ package body Databases is
    begin
      return Query.Fields (Column).Name /= Null_Unbounded_String;
    end Is_Defined;
-
 
    ----------
    -- Bind --
@@ -210,7 +206,6 @@ package body Databases is
       end case;
    end Bind;
 
-
    -----------
    -- Query --
    -----------
@@ -224,7 +219,6 @@ package body Databases is
       Query.Fields (Column).Operator    := Operator;
       Query.Fields (Column).Query_Value := To_Unbounded_String (Value);
    end Query;
-
 
    -----------
    -- Query --
@@ -243,7 +237,6 @@ package body Databases is
       end if;
    end Query;
 
-
    ------------------
    -- Reset_Select --
    ------------------
@@ -252,7 +245,6 @@ package body Databases is
    begin
       Free (Query.SQL);
    end Reset_Select;
-
 
    ----------
    -- Name --
@@ -266,7 +258,6 @@ package body Databases is
       return To_String (Query.Fields (Column).Name);
    end Name;
 
-
    -----------------
    -- Query_Value --
    -----------------
@@ -279,7 +270,6 @@ package body Databases is
       return To_String (Query.Fields (Column).Query_Value);
    end Query_Value;
 
-
    ----------
    -- Last --
    ----------
@@ -291,7 +281,6 @@ package body Databases is
    begin
       return Natural (Query.Fields (Column).Last);
    end Last;
-
 
    --------------------
    -- Get_SQL_Select --
@@ -381,7 +370,6 @@ package body Databases is
       end;
    end Get_SQL_Select;
 
-
    ----------------
    -- SQL_Select --
    ----------------
@@ -437,7 +425,7 @@ package body Databases is
             RC := ODBC.SQLBindCol
               (Query.DBC_Statement_Handle,
                ODBC.UWORD (Column),
-               Types.SQL_TO_C (Query.Fields (Column).Data_Model).SQL_Value,
+               Types.SQL_To_C (Query.Fields (Column).Data_Model).SQL_Value,
                Query.Fields (Column).Address,
                Query.Fields (Column).Size,
                Query.Fields (Column).Last'Access);
@@ -455,7 +443,6 @@ package body Databases is
                                            Query.SQL.all,
                        Statement_Handle => Query.DBC_Statement_Handle);
    end SQL_Select;
-
 
    -----------
    -- Fetch --
@@ -481,7 +468,6 @@ package body Databases is
       end if;
    end Fetch;
 
-
    ---------------
    -- Parameter --
    ---------------
@@ -501,7 +487,6 @@ package body Databases is
          Size       => ODBC.SDWORD (Size),
          Last       => ODBC.SDWORD (Size));
    end Parameter;
-
 
    -------------
    -- Execute --
@@ -581,7 +566,6 @@ package body Databases is
 
       RC2 := ODBC.SQLFreeStmt (DBC_Statement_Handle, 0);
    end Execute;
-
 
    ----------
    -- Free --

@@ -1,16 +1,15 @@
+-- You must set up the "Clients_DB" ODBC string before running this demo.
+-- See readme.txt for instructions.
 
 --  Test des procedures
 
 with Ada.Exceptions;
 with Databases;
 with Ada.Text_IO;
-with Interfaces.C;
-with Win32.SQL;
 
 procedure Demo5 is
 
    use Ada;
-   use Interfaces;
 
    procedure Display (S : in String) is
    begin

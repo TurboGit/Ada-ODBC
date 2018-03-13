@@ -3,6 +3,8 @@
 -- Author : Pascal Obry
 --
 -- This is a sample program to show some ODBC features.
+-- You must set up the "Clients_DB" ODBC string before running this demo.
+-- See readme.txt for instructions.
 --
 -- It compile fine under GNAT 3.04a. You must add the following
 -- libraries : ODBC32.LIB
@@ -27,7 +29,7 @@ procedure Demo4 is
    end Display;
 
    Clients : aliased Databases.Database;
-   Query   : SQL_Select.Select_Datas;
+   Query   : SQL_Select.Select_Data;
 
 begin
 
@@ -41,8 +43,8 @@ begin
       Databases.SQL.Build_Select (From => "clients"),
       Query);
 
-   Display ("Get datas...");
-   Get_Datas :
+   Display ("Get data...");
+   Get_Data :
    declare
       Found : Boolean;
    begin
@@ -51,13 +53,13 @@ begin
          SQL_Select.Fetch (Query, Found);
          exit when not Found;
 
-         Display ("datas :");
+         Display ("data :");
          for Column in 1 .. SQL_Select.Number_Of_Columns (Query) loop
             Display (SQL_Select.Get_Value (Query, Column));
          end loop;
          Display ("----------");
       end loop;
-   end Get_Datas;
+   end Get_Data;
 
    Display ("Close...");
    Databases.Close (Clients);
