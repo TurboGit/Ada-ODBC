@@ -29,7 +29,7 @@ with Databases.Types;
 
 package body Databases is
 
-   pragma linker_Options ("-lodbc32");
+   pragma Linker_Options ("-lodbc32");
 
    procedure Free is new Ada.Unchecked_Deallocation (String, String_Access);
 
@@ -47,7 +47,7 @@ package body Databases is
    is
       RC            : ODBC.RETCODE;
       pragma Unreferenced (RC);
-      SQL_State     : Interfaces.C.Char_Array (1 .. 10);
+      SQL_State     : Interfaces.C.char_array (1 .. 10);
       Error_Code    : aliased ODBC.SDWORD;
       Error_Message : String (1 .. 500);
       Last          : aliased ODBC.SWORD := 0;
@@ -425,7 +425,7 @@ package body Databases is
             RC := ODBC.SQLBindCol
               (Query.DBC_Statement_Handle,
                ODBC.UWORD (Column),
-               Types.SQL_TO_C (Query.Fields (Column).Data_Model).SQL_Value,
+               Types.SQL_To_C (Query.Fields (Column).Data_Model).SQL_Value,
                Query.Fields (Column).Address,
                Query.Fields (Column).Size,
                Query.Fields (Column).Last'Access);

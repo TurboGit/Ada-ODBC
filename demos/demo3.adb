@@ -3,6 +3,8 @@
 -- Author : Pascal Obry
 --
 -- This is a sample program to show some ODBC features.
+-- You must set up the "Clients_DB" ODBC string before running this demo.
+-- See readme.txt for instructions.
 --
 -- It compile fine under GNAT 3.04a. You must add the following
 -- libraries : ODBC32.LIB

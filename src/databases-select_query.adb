@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                         Databases.Select_Query                           --
 --                                                                          --
---                        Copyright (C) 1999-2012                           --
+--                        Copyright (C) 1999-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -185,8 +185,8 @@ package body Databases.Select_Query is
          Max_Data_Length : constant := 10_000;
 
          Tmp_String    : String (1 .. Max_Data_Length);
-         Tmp_Integer   : Win32.Int;
-         Tmp_Double    : Win32.Double;
+         Tmp_Integer   : Win32.INT;
+         Tmp_Double    : Win32.DOUBLE;
          Tmp_Date      : ODBC_EXT.DATE_STRUCT;
          Tmp_Time      : ODBC_EXT.TIME_STRUCT;
          Tmp_TimeStamp : ODBC_EXT.TIMESTAMP_STRUCT;
@@ -205,7 +205,7 @@ package body Databases.Select_Query is
                sY( sY'Last-3 .. sY'Last ) & '-' &
                sM( sM'Last-1 .. sM'Last ) & '-' &
                sD( sD'Last-1 .. sD'Last );
-         end Date_image;
+         end Date_Image;
 
          function Time_Image
            (hour, minute, second : in ODBC.UWORD) return String
@@ -220,7 +220,7 @@ package body Databases.Select_Query is
                shr (shr'Last - 1 .. shr'Last) & ':' &
                smn (smn'Last - 1 .. smn'Last) & ':' &
                ssc (ssc'Last - 1 .. ssc'Last);
-         end Time_image;
+         end Time_Image;
 
          function Millisecond_Image
            (fraction : in ODBC.UDWORD) return String
@@ -230,7 +230,7 @@ package body Databases.Select_Query is
            sfr : constant String := UDWORD'Image( fraction + 1000);
          begin
             return sfr (sfr'Last - 2 .. sfr'Last);
-         end Millisecond_image;
+         end Millisecond_Image;
 
          procedure Check_Error is
          begin
@@ -342,7 +342,7 @@ package body Databases.Select_Query is
                   Check_Error;
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
-                      (Date_image(Tmp_date.year,Tmp_date.month,Tmp_date.day));
+                      (Date_Image(Tmp_Date.year,Tmp_Date.month,Tmp_Date.day));
 
                when ODBC_EXT.SQL_TIME =>
                   RC := ODBC_EXT.SQLGetData
@@ -356,30 +356,30 @@ package body Databases.Select_Query is
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                       (Time_Image
-                        (Tmp_time.hour, Tmp_time.minute, Tmp_time.second));
+                        (Tmp_Time.hour, Tmp_Time.minute, Tmp_Time.second));
 
                when ODBC_EXT.SQL_TIMESTAMP =>
                   RC := ODBC_EXT.SQLGetData
                     (Context.DBC_Statement_Handle,
                      ODBC.UWORD (Column),
                      Types.SQL_To_C (SQL_TIMESTAMP).C_Value,
-                     Tmp_Timestamp'Address,
+                     Tmp_TimeStamp'Address,
                      0,
                      Data_Length'Access);
                   Check_Error;
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                       (Date_Image(
-                          Tmp_timestamp.year,
-                          Tmp_timestamp.month,
-                          Tmp_timestamp.day)
+                          Tmp_TimeStamp.year,
+                          Tmp_TimeStamp.month,
+                          Tmp_TimeStamp.day)
                        & ' ' &
-                       Time_image(
-                          Tmp_timestamp.hour,
-                          Tmp_timestamp.minute,
-                          Tmp_timestamp.second)
+                       Time_Image(
+                          Tmp_TimeStamp.hour,
+                          Tmp_TimeStamp.minute,
+                          Tmp_TimeStamp.second)
                        & '.' &
-                       Millisecond_image(Tmp_timestamp.fraction)
+                       Millisecond_Image(Tmp_TimeStamp.fraction)
                       );
 
                when others =>

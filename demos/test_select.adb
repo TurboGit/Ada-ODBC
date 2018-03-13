@@ -20,8 +20,8 @@ procedure Test_Select is
 
 begin
 
-   Display ("Open (connect) driver [" & driver & "]...");
-   Databases.Connect (Clients, driver, "", "");
+   Display ("Open (connect) driver [" & Driver & "]...");
+   Databases.Connect (Clients, Driver, "", "");
 
    Display ("Execute Select...");
 
@@ -72,4 +72,4 @@ exception
       Ada.Text_IO.Put("[Press enter]");
       Ada.Text_IO.Skip_Line;
 
-end Test_select;
+end Test_Select;

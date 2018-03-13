@@ -18,6 +18,9 @@
 --  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.       --
 ------------------------------------------------------------------------------
 --
+--  NB: a recent version of Databases may be located
+--      here: https://github.com/TurboGit/Ada-ODBC
+--
 --     *** Constructors / Destructors
 --
 --     Connect (DB, Driver, UID, Passwd)
@@ -96,8 +99,8 @@
 --        => SQL_Error
 
 with Ada.Strings.Unbounded;
-with Win32.SQL;
-with Win32.SQLExt;
+with Win32.Sql;
+with Win32.Sqlext;
 
 with System;
 
@@ -143,8 +146,8 @@ package Databases is
          Day   : Short_Integer;
       end record;
 
-   SQL_PARAM_INPUT  : constant := Win32.SQLEXT.SQL_PARAM_INPUT;
-   SQL_PARAM_OUTPUT : constant := Win32.SQLEXT.SQL_PARAM_OUTPUT;
+   SQL_PARAM_INPUT  : constant := Win32.Sqlext.SQL_PARAM_INPUT;
+   SQL_PARAM_OUTPUT : constant := Win32.Sqlext.SQL_PARAM_OUTPUT;
 
    --  -----------------------------------------------------------------  --
    --  Connect-Open / Close
@@ -218,8 +221,8 @@ package Databases is
 
 private
 
-   package ODBC     renames Win32.SQL;
-   package ODBC_EXT renames Win32.SQLExt;
+   package ODBC     renames Win32.Sql;
+   package ODBC_EXT renames Win32.Sqlext;
 
    procedure Check_SQL_Error (DB               : in Database;
                               RC               : in ODBC.RETCODE;
