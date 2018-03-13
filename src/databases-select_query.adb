@@ -484,5 +484,27 @@ package body Databases.Select_Query is
       end case;
    end Get_Model_Name;
 
-end Databases.Select_Query;
+   ------------------
+   -- Simple_Query --
+   ------------------
 
+   function Simple_Query (Query, Driver, UID, PASSWD : in String) return String is
+      DB         : Databases.Database;
+      Query_data : Select_Data;
+      Found      : Boolean;
+   begin
+      Connect (DB, Driver, UID, PASSWD);
+      Execute (DB, Query, Query_data);
+      Fetch (Query_data, Found);
+
+      if Found then
+         return Get_Value (Query_data, 1);
+      else
+         return "";
+      end if;
+   exception
+      when others =>
+         return "";
+   end Simple_Query;
+
+end Databases.Select_Query;

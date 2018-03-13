@@ -69,6 +69,11 @@ package Databases.Select_Query is
                             Column  : in Positive)
                             return String;
 
+   function Simple_Query
+     (Query, Driver, UID, PASSWD : in String) return String;
+   --  Returns an atomic information from a database, that is
+   --  the first element (first column of first row) of a query's result
+
 private
 
    type Column_Data is
