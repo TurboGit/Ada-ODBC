@@ -488,23 +488,31 @@ package body Databases.Select_Query is
    -- Simple_Query --
    ------------------
 
-   function Simple_Query (Query, Driver, UID, PASSWD : in String) return String is
-      DB         : Databases.Database;
-      Query_data : Select_Data;
-      Found      : Boolean;
+   function Simple_Query
+     (Query, Driver, UID, PASSWD : in String) return String
+   is
+      DB                : Databases.Database;
+      Query_data        : Select_Data;
+      Found, DB_Line_OK : Boolean;
    begin
       Connect (DB, Driver, UID, PASSWD);
       Execute (DB, Query, Query_data);
-      Fetch (Query_data, Found);
 
-      if Found then
+      begin
+         DB_Line_OK := True;
+         Fetch (Query_data, Found);
+      exception
+         when others =>
+            DB_Line_OK := False;
+      end;
+
+      Close (DB);
+
+      if DB_Line_OK and then Found then
          return Get_Value (Query_data, 1);
       else
          return "";
       end if;
-   exception
-      when others =>
-         return "";
    end Simple_Query;
 
 end Databases.Select_Query;
