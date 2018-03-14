@@ -30,6 +30,19 @@ project Databases is
 
    for Exec_Dir use "bin";
 
+   type OS_Type is ("Windows_NT", "UNIX");
+   OS : OS_Type := external ("OS", "UNIX");
+
+   TARGET := external ("BUILD_TARGET", "x86_64-pc-mingw32");
+
+   case OS is
+      when "Windows_NT" =>
+         --  Native build
+         null;
+      when "UNIX" =>
+         for Target use TARGET;
+   end case;
+
    package Compiler is
 
      for Default_Switches ("ada") use (
