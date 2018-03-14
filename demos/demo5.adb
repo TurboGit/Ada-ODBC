@@ -26,7 +26,6 @@ procedure Demo5 is
    Clients_Parameters : Databases.Parameter_Set (3);
 
 begin
-
    Display ("Open...");
    Databases.Connect (Clients, "Clients_DB", "guest", "guest");
 
@@ -57,10 +56,8 @@ begin
    Databases.Close (Clients);
 
 exception
-
    when E : others =>
       Display ("Probleme avec ODBC :-( ... : " &
                Ada.Exceptions.Exception_Message (E));
       Databases.Close (Clients);
-
 end Demo5;
