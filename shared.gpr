@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                                Databases                                 --
 --                                                                          --
---                        Copyright (C) 2007-2018                           --
+--                        Copyright (C) 2010-2018                           --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -18,27 +18,34 @@
 --  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.       --
 ------------------------------------------------------------------------------
 
-with "win32ada";
-with "shared";
+abstract project Shared is
 
-project Databases is
+   type OS_Type is ("Windows_NT", "UNIX");
+   OS : OS_Type := external ("OS", "UNIX");
 
-   for Source_Dirs use ("src", "demos");
-   for Object_Dir use "obj";
+   Target := external ("BUILD_TARGET", "x86_64-pc-mingw32");
 
-   for Main use ("demo.adb", "demo3.adb", "demo4.adb", "demo5.adb",
-                 "test_select.adb");
-
-   for Exec_Dir use "bin";
-
-   case Shared.OS is
+   case OS is
       when "Windows_NT" =>
          --  Native build
          null;
       when "UNIX" =>
-         for Target use Shared.Target;
+         for Target use TARGET;
    end case;
 
-   package Compiler renames Shared.Compiler;
+   package Compiler is
 
-end Databases;
+     for Default_Switches ("ada") use (
+       "-gnatyaknpr",
+       --  Style: check all casings: a:attribute, k:keywords,
+       --         n:package Standard identifiers, p:pragma,
+       --         r:identifier references
+
+       "-gnatybfhiu",
+       --  Style: check b:no blanks at end of lines, f:no ff/vtabs,
+       --         h: no htabs, i:if-then layout, u:no unnecessary blank lines
+
+       "-gnato", "-fno-inline", "-fstack-check", "-g", "-gnatwa", "-gnatVa");
+   end Compiler;
+
+end Shared;
