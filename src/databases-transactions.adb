@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
---                                Database                                  --
+--                                 Database                                 --
 --                                                                          --
---                        Copyright (C) 1999-2018                           --
+--                         Copyright (C) 1999-2018                          --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -26,17 +26,19 @@ package body Databases.Transactions is
    -- Auto_Commit --
    -----------------
 
-   procedure Auto_Commit (DB       : in Database;
-                          Position : in Switch) is
+   procedure Auto_Commit
+     (DB : in Database; Position : in Switch) is
    begin
       if Position = On then
-         Options.Set (DB,
-                      ODBC_EXT.SQL_AUTOCOMMIT,
-                      ODBC_EXT.SQL_AUTOCOMMIT_ON);
+         Options.Set
+           (DB,
+            ODBC_EXT.SQL_AUTOCOMMIT,
+            ODBC_EXT.SQL_AUTOCOMMIT_ON);
       else
-         Options.Set (DB,
-                      ODBC_EXT.SQL_AUTOCOMMIT,
-                      ODBC_EXT.SQL_AUTOCOMMIT_OFF);
+         Options.Set
+           (DB,
+            ODBC_EXT.SQL_AUTOCOMMIT,
+            ODBC_EXT.SQL_AUTOCOMMIT_OFF);
       end if;
    end Auto_Commit;
 
@@ -47,9 +49,11 @@ package body Databases.Transactions is
    procedure Commit (DB : in Database) is
       RC : ODBC.RETCODE;
    begin
-      RC := ODBC.SQLTransact (DB.DBC_Environment_Handle,
-                              DB.DBC_Handle,
-                              ODBC.SQL_COMMIT);
+      RC := ODBC.SQLTransact
+        (DB.DBC_Environment_Handle,
+         DB.DBC_Handle,
+         ODBC.SQL_COMMIT);
+
       Check_SQL_Error (DB, RC, Procedure_Name => "Commit");
    end Commit;
 
@@ -60,9 +64,11 @@ package body Databases.Transactions is
    procedure Rollback (DB : in Database) is
       RC : ODBC.RETCODE;
    begin
-      RC := ODBC.SQLTransact (DB.DBC_Environment_Handle,
-                              DB.DBC_Handle,
-                              ODBC.SQL_ROLLBACK);
+      RC := ODBC.SQLTransact
+        (DB.DBC_Environment_Handle,
+         DB.DBC_Handle,
+         ODBC.SQL_ROLLBACK);
+
       Check_SQL_Error (DB, RC, Procedure_Name => "Rollback");
    end Rollback;
 

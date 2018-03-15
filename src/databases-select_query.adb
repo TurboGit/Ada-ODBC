@@ -19,7 +19,6 @@
 ------------------------------------------------------------------------------
 
 with Ada.Unchecked_Conversion;
-with Ada.Exceptions;
 
 with Databases.Cursors;
 with Databases.Types;
@@ -28,42 +27,47 @@ package body Databases.Select_Query is
 
    Internal_Error_Data_Type_Not_Yet_Implemented : exception;
 
-   function To_PUCHAR is new Ada.Unchecked_Conversion (System.Address,
-                                                       Win32.PUCHAR);
+   function To_PUCHAR is
+     new Ada.Unchecked_Conversion (System.Address, Win32.PUCHAR);
 
    -------------
    -- Execute --
    -------------
 
-   procedure Execute (DB         : in      Database;
-                      Statement  : in      String;
-                      Context    :    out  Select_Data;
-                      Parameters : in      Parameter_Set    := No_Parameter;
-                      Cursor     : in      Databases.Cursor := No_Cursor)
+   procedure Execute
+     (DB         : in      Database;
+      Statement  : in      String;
+      Context    :    out  Select_Data;
+      Parameters : in      Parameter_Set    := No_Parameter;
+      Cursor     : in      Databases.Cursor := No_Cursor)
    is
       RC  : ODBC.RETCODE;
    begin --  Execute
-
       Context.Base := DB;
 
       --  allocate statement block
-      RC := ODBC.SQLAllocStmt (DB.DBC_Handle,
-                               Context.DBC_Statement_Handle'Access);
-      Check_SQL_Error (DB, RC,
-                       Procedure_Name   => "Execute",
-                       Error_Message    => "Allocation Statement",
-                       Statement_Handle => Context.DBC_Statement_Handle);
+
+      RC := ODBC.SQLAllocStmt
+        (DB.DBC_Handle, Context.DBC_Statement_Handle'Access);
+
+      Check_SQL_Error
+        (DB, RC,
+         Procedure_Name   => "Execute",
+         Error_Message    => "Allocation Statement",
+         Statement_Handle => Context.DBC_Statement_Handle);
 
       --  set the cursor if needed
+
       if Cursor /= No_Cursor then
          declare
-            Cursor_Name : constant String
-                        := Databases.Cursors.Get_Name (Cursor);
+            Cursor_Name : constant String :=
+                            Databases.Cursors.Get_Name (Cursor);
          begin
             RC := ODBC.SQLSetCursorName
               (Context.DBC_Statement_Handle,
                To_PUCHAR (Cursor_Name (Cursor_Name'First)'Address),
                Cursor_Name'Length);
+
             Check_SQL_Error
               (DB, RC,
                Procedure_Name   => "Execute",
@@ -73,6 +77,7 @@ package body Databases.Select_Query is
       end if;
 
       --  prepare query
+
       Context.SQL := new String'(Statement);
 
       if Parameters = No_Parameter then
@@ -80,26 +85,30 @@ package body Databases.Select_Query is
            (Context.DBC_Statement_Handle,
             To_PUCHAR (Context.SQL (Context.SQL'First)'Address),
             Context.SQL'Length);
-         Check_SQL_Error (DB, RC,
-                          Procedure_Name   => "Execute",
-                          Error_Message    => "Execute query",
-                          Statement_Handle => Context.DBC_Statement_Handle);
+
+         Check_SQL_Error
+           (DB, RC,
+            Procedure_Name   => "Execute",
+            Error_Message    => "Execute query",
+            Statement_Handle => Context.DBC_Statement_Handle);
+
       else
          RC := ODBC.SQLPrepare
            (Context.DBC_Statement_Handle,
             To_PUCHAR (Context.SQL (Context.SQL'First)'Address),
             Context.SQL'Length);
+
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
-            Error_Message    => "Preparation of SQL statement : " &
-                                Context.SQL.all,
+            Error_Message    => "Preparation of SQL statement : "
+                                & Context.SQL.all,
             Statement_Handle => Context.DBC_Statement_Handle);
 
          for Parameter_Number in 1 .. Parameters.N loop
             declare
-               Parameter : Parameter_Data
-                 := Parameters.Parameters (Parameter_Number);
+               Parameter : Parameter_Data :=
+                             Parameters.Parameters (Parameter_Number);
             begin
                RC := ODBC_EXT.SQLBindParameter
                  (Context.DBC_Statement_Handle,
@@ -112,21 +121,23 @@ package body Databases.Select_Query is
                   Parameter.Address,
                   Parameter.Size,
                   Parameter.Last'Access);
+
                Check_SQL_Error
                  (DB, RC,
                   Procedure_Name   => "Execute",
-                  Error_Message    => "Parameters of SQL statement : " &
-                                      Context.SQL.all,
+                  Error_Message    => "Parameters of SQL statement : "
+                                      & Context.SQL.all,
                   Statement_Handle => Context.DBC_Statement_Handle);
             end;
          end loop;
 
          RC := ODBC.SQLExecute (Context.DBC_Statement_Handle);
+
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
-            Error_Message    => "Execution of SQL statement : " &
-                                 Context.SQL.all,
+            Error_Message    => "Execution of SQL statement : "
+                                 & Context.SQL.all,
             Statement_Handle => Context.DBC_Statement_Handle);
       end if;
 
@@ -139,16 +150,16 @@ package body Databases.Select_Query is
          Precision       : aliased ODBC.SDWORD;
          Scale, Nullable : aliased ODBC.SWORD;
       begin
-         RC := ODBC.SQLNumResultCols (Context.DBC_Statement_Handle,
-                                      Number_Columns'Access);
+         RC := ODBC.SQLNumResultCols
+           (Context.DBC_Statement_Handle, Number_Columns'Access);
+
          Check_SQL_Error
            (DB, RC,
             Procedure_Name   => "Execute",
             Error_Message    => "Get number of columns",
             Statement_Handle => Context.DBC_Statement_Handle);
 
-         Context.Columns :=
-          new Columns_Data (1 .. Positive (Number_Columns));
+         Context.Columns := new Columns_Data (1 .. Positive (Number_Columns));
 
          for Column in 1 .. Positive (Number_Columns) loop
             RC := ODBC.SQLDescribeCol
@@ -167,18 +178,26 @@ package body Databases.Select_Query is
          end loop;
 
       end Build_Context_Data;
-
    end Execute;
 
    -----------
    -- Fetch --
    -----------
 
-   procedure Fetch (Context : in     Select_Data;
-                    Found   :    out Boolean)
+   procedure Fetch
+     (Context : in     Select_Data;
+      Found   :    out Boolean)
    is
       use type ODBC.RETCODE;
+
       RC : ODBC.RETCODE;
+
+      procedure Get_Columns_Data;
+      --  ???
+
+      ----------------------
+      -- Get_Columns_Data --
+      ----------------------
 
       procedure Get_Columns_Data is
 
@@ -192,45 +211,61 @@ package body Databases.Select_Query is
          Tmp_TimeStamp : ODBC_EXT.TIMESTAMP_STRUCT;
          Data_Length   : aliased ODBC.SDWORD;
 
+         ----------------
+         -- Date_Image --
+         ----------------
+
          function Date_Image
            (year : in ODBC.SWORD; month, day : in ODBC.UWORD) return String
          is
            use ODBC;
-           -- + 100: trick for obtaining 0x
+           --  + 100: trick for obtaining 0x
            sY : constant String:= SWORD'Image (year);
            sM : constant String:= UWORD'Image (month + 100);
            sD : constant String:= UWORD'Image (day + 100);
          begin
             return
-               sY( sY'Last-3 .. sY'Last ) & '-' &
-               sM( sM'Last-1 .. sM'Last ) & '-' &
-               sD( sD'Last-1 .. sD'Last );
+               sY( sY'Last-3 .. sY'Last ) & '-'
+               & sM( sM'Last-1 .. sM'Last ) & '-'
+               & sD( sD'Last-1 .. sD'Last );
          end Date_Image;
+
+         ----------------
+         -- Time_Image --
+         ----------------
 
          function Time_Image
            (hour, minute, second : in ODBC.UWORD) return String
          is
            use ODBC;
-           -- + 100: trick for obtaining 0x
+           --  + 100: trick for obtaining 0x
            shr : constant String:= UWORD'Image (hour + 100);
            smn : constant String:= UWORD'Image (minute + 100);
            ssc : constant String:= UWORD'Image (second + 100);
          begin
             return
-               shr (shr'Last - 1 .. shr'Last) & ':' &
-               smn (smn'Last - 1 .. smn'Last) & ':' &
-               ssc (ssc'Last - 1 .. ssc'Last);
+               shr (shr'Last - 1 .. shr'Last) & ':'
+               & smn (smn'Last - 1 .. smn'Last) & ':'
+               & ssc (ssc'Last - 1 .. ssc'Last);
          end Time_Image;
+
+         -----------------------
+         -- Millisecond_Image --
+         -----------------------
 
          function Millisecond_Image
            (fraction : in ODBC.UDWORD) return String
          is
            use ODBC;
-           -- + 1000: trick for obtaining 0x
+           --  + 1000: trick for obtaining 0x
            sfr : constant String := UDWORD'Image( fraction + 1000);
          begin
             return sfr (sfr'Last - 2 .. sfr'Last);
          end Millisecond_Image;
+
+         -----------------
+         -- Check_Error --
+         -----------------
 
          procedure Check_Error is
          begin
@@ -243,9 +278,7 @@ package body Databases.Select_Query is
 
       begin
          for Column in Context.Columns'Range loop
-
             case Context.Columns (Column).Model is
-
                when ODBC.SQL_FLOAT =>
                   RC := ODBC_EXT.SQLGetData
                     (Context.DBC_Statement_Handle,
@@ -254,7 +287,9 @@ package body Databases.Select_Query is
                      Tmp_Double'Address,
                      0,
                      Data_Length'Access);
+
                   Check_Error;
+
                   Context.Columns (Column).Value :=
                     Trim (To_Unbounded_String
                             (Float'Image (Float (Tmp_Double))),
@@ -268,7 +303,9 @@ package body Databases.Select_Query is
                      Tmp_Integer'Address,
                      0,
                      Data_Length'Access);
+
                   Check_Error;
+
                   Context.Columns (Column).Value :=
                     Trim (To_Unbounded_String
                             (Integer'Image (Integer (Tmp_Integer))),
@@ -282,7 +319,9 @@ package body Databases.Select_Query is
                      Tmp_Integer'Address,
                      0,
                      Data_Length'Access);
+
                   Check_Error;
+
                   Context.Columns (Column).Value :=
                     Trim (To_Unbounded_String
                             (Integer'Image (Integer (Tmp_Integer))),
@@ -297,7 +336,9 @@ package body Databases.Select_Query is
                      Tmp_Integer'Address,
                      0,
                      Data_Length'Access);
+
                   Check_Error;
+
                   Context.Columns (Column).Value :=
                     Trim (To_Unbounded_String
                             (Integer'Image (Integer (Tmp_Integer))),
@@ -311,7 +352,9 @@ package body Databases.Select_Query is
                      Tmp_String'Address,
                      Max_Data_Length,
                      Data_Length'Access);
+
                   Check_Error;
+
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                        (Tmp_String
@@ -325,7 +368,9 @@ package body Databases.Select_Query is
                      Tmp_String'Address,
                      Max_Data_Length,
                      Data_Length'Access);
+
                   Check_Error;
+
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                        (Tmp_String
@@ -339,7 +384,9 @@ package body Databases.Select_Query is
                      Tmp_Date'Address,
                      0,
                      Data_Length'Access);
+
                   Check_Error;
+
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                       (Date_Image(Tmp_Date.year,Tmp_Date.month,Tmp_Date.day));
@@ -366,7 +413,9 @@ package body Databases.Select_Query is
                      Tmp_TimeStamp'Address,
                      0,
                      Data_Length'Access);
+
                   Check_Error;
+
                   Context.Columns (Column).Value :=
                     To_Unbounded_String
                       (Date_Image(
@@ -383,19 +432,15 @@ package body Databases.Select_Query is
                       );
 
                when others =>
-                  Ada.Exceptions.Raise_Exception
-                    (Internal_Error_Data_Type_Not_Yet_Implemented'Identity,
-                     Message =>
-                       "Data type number" &
-                       ODBC.SWORD'Image(Context.Columns (Column).Model) &
-                       " not Yet Implemented."
-                    );
-
+                  raise Internal_Error_Data_Type_Not_Yet_Implemented
+                    with "Data type number"
+                      & ODBC.SWORD'Image (Context.Columns (Column).Model)
+                      & " not Yet Implemented.";
             end case;
          end loop;
       end Get_Columns_Data;
 
-   begin --  Fetch
+   begin
       RC := ODBC.SQLFetch (Context.DBC_Statement_Handle);
 
       Found := True;
@@ -403,10 +448,12 @@ package body Databases.Select_Query is
       if RC = ODBC.SQL_NO_DATA_FOUND then
          Found := False;
       else
-         Check_SQL_Error (Context.Base, RC,
-                          Procedure_Name   => "Fetch",
-                          Error_Message    => "Fetch error",
-                          Statement_Handle => Context.DBC_Statement_Handle);
+         Check_SQL_Error
+           (Context.Base, RC,
+            Procedure_Name   => "Fetch",
+            Error_Message    => "Fetch error",
+            Statement_Handle => Context.DBC_Statement_Handle);
+
          Get_Columns_Data;
       end if;
    end Fetch;
@@ -415,8 +462,7 @@ package body Databases.Select_Query is
    -- Number_Of_Columns --
    -----------------------
 
-   function Number_Of_Columns (Context : in Select_Data)
-                               return Positive is
+   function Number_Of_Columns (Context : in Select_Data) return Positive is
    begin
       return Context.Columns'Length;
    end Number_Of_Columns;
@@ -425,9 +471,9 @@ package body Databases.Select_Query is
    -- Get_Name --
    --------------
 
-   function Get_Name (Context : in Select_Data;
-                      Column  : in Positive)
-                      return String is
+   function Get_Name
+     (Context : in Select_Data;
+      Column  : in Positive) return String is
    begin
       return To_String (Context.Columns (Column).Name);
    end Get_Name;
@@ -436,9 +482,9 @@ package body Databases.Select_Query is
    -- Get_Value --
    ---------------
 
-   function Get_Value (Context : in Select_Data;
-                       Column  : in Positive)
-                       return String is
+   function Get_Value
+     (Context : in Select_Data;
+      Column  : in Positive) return String is
    begin
       return To_String (Context.Columns (Column).Value);
    end Get_Value;
@@ -447,9 +493,9 @@ package body Databases.Select_Query is
    -- Get_Model_Name --
    --------------------
 
-   function Get_Model_Name (Context : in Select_Data;
-                            Column  : in Positive)
-                            return String is
+   function Get_Model_Name
+     (Context : in Select_Data;
+      Column  : in Positive) return String is
    begin
       case Context.Columns (Column).Model is
          when ODBC.SQL_REAL =>
@@ -474,13 +520,10 @@ package body Databases.Select_Query is
             return "Ada.Calendar.Time";
 
          when others =>
-            Ada.Exceptions.Raise_Exception
-              (Internal_Error_Data_Type_Not_Yet_Implemented'Identity,
-               Message =>
-                 "Data type number " &
-                 ODBC.SWORD'Image(Context.Columns (Column).Model) &
-                 " not yet implemented."
-              );
+            raise Internal_Error_Data_Type_Not_Yet_Implemented
+              with "Data type number "
+                & ODBC.SWORD'Image (Context.Columns (Column).Model)
+                & " not yet implemented.";
       end case;
    end Get_Model_Name;
 

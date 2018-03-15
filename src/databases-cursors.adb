@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                            Databases.Cursors                             --
 --                                                                          --
---                        Copyright (C) 1999-2012                           --
+--                         Copyright (C) 1999-2018                          --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -25,10 +25,11 @@ package body Databases.Cursors is
 
    use Ada;
 
-   Cursor_ID : Natural := 0;
+   Space_To_0 : constant Strings.Maps.Character_Mapping :=
+                  Strings.Maps.To_Mapping (" ", "0");
 
-   Space_To_0 : constant Strings.Maps.Character_Mapping
-              := Strings.Maps.To_Mapping (" ", "0");
+   Cursor_ID  : Natural := 0;
+   --  ??? Not thread safe
 
    ------------
    -- Create --
@@ -46,9 +47,7 @@ package body Databases.Cursors is
    -- Get_Name --
    --------------
 
-   function Get_Name (Cursor : in Databases.Cursor)
-                      return String
-   is
+   function Get_Name (Cursor : in Databases.Cursor) return String is
    begin
       return To_String (Cursor);
    end Get_Name;
@@ -57,9 +56,7 @@ package body Databases.Cursors is
    -- For_Where_Clause --
    ----------------------
 
-   function For_Where_Clause (Cursor : in Databases.Cursor)
-                              return String
-   is
+   function For_Where_Clause (Cursor : in Databases.Cursor) return String is
    begin
       return "CURRENT OF " & Get_Name (Cursor);
    end For_Where_Clause;

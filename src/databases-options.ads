@@ -38,17 +38,20 @@ package Databases.Options is
 
    --  Connection options
 
-   procedure Set (DB     : in Database;
-                  Option : in Natural;
-                  Value  : in Natural);
+   procedure Set
+     (DB     : in Database;
+      Option : in Natural;
+      Value  : in Natural);
 
    --  Query options
 
-   procedure Set (Query  : in Select_Statement;
-                  Option : in Natural;
-                  Value  : in Natural);
+   procedure Set
+     (Query  : in Select_Statement;
+      Option : in Natural;
+      Value  : in Natural);
 
-   procedure Set (Query      : in out Select_Statement;
-                  For_Update : in     For_Update_Options);
+   procedure Set
+     (Query      : in out Select_Statement;
+      For_Update : in     For_Update_Options);
 
 end Databases.Options;

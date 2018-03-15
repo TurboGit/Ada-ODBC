@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
 --                            Databases.Cursors                             --
 --                                                                          --
---                        Copyright (C) 1999-2012                           --
+--                         Copyright (C) 1999-2018                          --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -37,10 +37,8 @@ package Databases.Cursors is
 
    procedure Create (Cursor : in out Databases.Cursor);
 
-   function Get_Name (Cursor : in Databases.Cursor)
-                      return String;
+   function Get_Name (Cursor : in Databases.Cursor) return String;
 
-   function For_Where_Clause (Cursor : in Databases.Cursor)
-                              return String;
+   function For_Where_Clause (Cursor : in Databases.Cursor) return String;
 
 end Databases.Cursors;

@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
---                                Database                                  --
+--                                 Database                                 --
 --                                                                          --
---                        Copyright (C) 1999-2007                           --
+--                         Copyright (C) 1999-2018                          --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -24,15 +24,16 @@ package body Databases.SQL is
    -- Build_Select --
    ------------------
 
-   function Build_Select (Fields     : in String  := Empty_String;
-                          From       : in String;
-                          Where      : in String  := Empty_String;
-                          For_Update : in For_Update_Options := None)
-                          return String
+   function Build_Select
+     (Fields     : in String  := Empty_String;
+      From       : in String;
+      Where      : in String  := Empty_String;
+      For_Update : in For_Update_Options := None) return String
    is
       Statement : Unbounded_String;
    begin
       Statement := To_Unbounded_String ("SELECT ");
+
       if Fields = Empty_String then
          Append (Statement, "*");
       else
@@ -63,10 +64,10 @@ package body Databases.SQL is
    -- Build_Update --
    ------------------
 
-   function Build_Update (Table : in String;
-                          Set   : in String;
-                          Where : in String := Empty_String)
-                          return String
+   function Build_Update
+     (Table : in String;
+      Set   : in String;
+      Where : in String := Empty_String) return String
    is
       Statement : Unbounded_String;
    begin

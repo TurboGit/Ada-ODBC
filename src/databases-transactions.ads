@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
---                                Database                                  --
+--                                 Database                                 --
 --                                                                          --
---                        Copyright (C) 1999-2007                           --
+--                         Copyright (C) 1999-2018                          --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -33,8 +33,7 @@
 
 package Databases.Transactions is
 
-   procedure Auto_Commit (DB       : in Database;
-                          Position : in Switch);
+   procedure Auto_Commit (DB : in Database; Position : in Switch);
 
    procedure Commit   (DB : in Database);
    procedure Rollback (DB : in Database);

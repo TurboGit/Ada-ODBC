@@ -45,29 +45,30 @@ package Databases.Select_Query is
 
    type Select_Data is private;
 
-   procedure Execute (DB         : in     Database;
-                      Statement  : in     String;
-                      Context    :    out Select_Data;
-                      Parameters : in     Parameter_Set    := No_Parameter;
-                      Cursor     : in     Databases.Cursor := No_Cursor);
+   procedure Execute
+     (DB         : in     Database;
+      Statement  : in     String;
+      Context    :    out Select_Data;
+      Parameters : in     Parameter_Set    := No_Parameter;
+      Cursor     : in     Databases.Cursor := No_Cursor);
 
-   procedure Fetch (Context : in     Select_Data;
-                    Found   :    out Boolean);
+   procedure Fetch
+     (Context : in     Select_Data;
+      Found   :    out Boolean);
 
-   function Number_Of_Columns (Context : in Select_Data)
-                               return Positive;
+   function Number_Of_Columns (Context : in Select_Data) return Positive;
 
-   function Get_Value (Context : in Select_Data;
-                       Column  : in Positive)
-                       return String;
+   function Get_Value
+     (Context : in Select_Data;
+      Column  : in Positive) return String;
 
-   function Get_Name (Context : in Select_Data;
-                      Column  : in Positive)
-                      return String;
+   function Get_Name
+     (Context : in Select_Data;
+      Column  : in Positive) return String;
 
-   function Get_Model_Name (Context : in Select_Data;
-                            Column  : in Positive)
-                            return String;
+   function Get_Model_Name
+     (Context : in Select_Data;
+      Column  : in Positive) return String;
 
    function Simple_Query
      (Query, Driver, UID, PASSWD : in String) return String;
@@ -76,21 +77,20 @@ package Databases.Select_Query is
 
 private
 
-   type Column_Data is
-      record
-         Name  : Unbounded_String;
-         Value : Unbounded_String;
-         Model : aliased ODBC.SWORD;
-      end record;
+   type Column_Data is record
+      Name  : Unbounded_String;
+      Value : Unbounded_String;
+      Model : aliased ODBC.SWORD;
+   end record;
+
    type Columns_Data is array (Positive range <>) of Column_Data;
    type Columns_Data_Access is access Columns_Data;
 
-   type Select_Data is
-      record
-         Base                 : Database;
-         DBC_Statement_Handle : aliased ODBC.HSTMT;
-         Columns              : Columns_Data_Access;
-         SQL                  : String_Access;
-      end record;
+   type Select_Data is record
+      Base                 : Database;
+      DBC_Statement_Handle : aliased ODBC.HSTMT;
+      Columns              : Columns_Data_Access;
+      SQL                  : String_Access;
+   end record;
 
 end Databases.Select_Query;

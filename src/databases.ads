@@ -139,12 +139,11 @@ package Databases is
                       SQL_NUMERIC, SQL_DECIMAL, SQL_INTEGER, SQL_SMALLINT,
                       SQL_FLOAT, SQL_REAL, SQL_DOUBLE);
 
-   type Date_Record is
-      record
-         Year  : Short_Integer;
-         Month : Short_Integer;
-         Day   : Short_Integer;
-      end record;
+   type Date_Record is record
+      Year  : Short_Integer;
+      Month : Short_Integer;
+      Day   : Short_Integer;
+   end record;
 
    SQL_PARAM_INPUT  : constant := Win32.Sqlext.SQL_PARAM_INPUT;
    SQL_PARAM_OUTPUT : constant := Win32.Sqlext.SQL_PARAM_OUTPUT;
@@ -158,64 +157,71 @@ package Databases is
    --  -----------------------------------------------------------------  --
    --  Columns binding
 
-   procedure Bind (Query      : in out Select_Statement;
-                   Column     : in     Column_Number;
-                   Name       : in     String;
-                   Address    : in     System.Address;
-                   Size       : in     Natural;
-                   Data_Model : in     Data_Type);
+   procedure Bind
+     (Query      : in out Select_Statement;
+      Column     : in     Column_Number;
+      Name       : in     String;
+      Address    : in     System.Address;
+      Size       : in     Natural;
+      Data_Model : in     Data_Type);
 
-   procedure Query (Query    : in out Select_Statement;
-                    Column   : in     Column_Number;
-                    Operator : in     Operators;
-                    Value    : in     String);
+   procedure Query
+     (Query    : in out Select_Statement;
+      Column   : in     Column_Number;
+      Operator : in     Operators;
+      Value    : in     String);
 
-   procedure Query (Query        : in out Select_Statement;
-                    Where_Clause : in     String := "";
-                    SQL_Clause   : in     String := "");
+   procedure Query
+     (Query        : in out Select_Statement;
+      Where_Clause : in     String := "";
+      SQL_Clause   : in     String := "");
 
    procedure Reset_Select (Query : in out Select_Statement);
 
    --  -----------------------------------------------------------------  --
    --  Accessors
 
-   function Name (Query  : in Select_Statement;
-                  Column : in Column_Number)
-                  return String;
+   function Name
+     (Query  : in Select_Statement;
+      Column : in Column_Number) return String;
 
-   function Query_Value (Query  : in Select_Statement;
-                         Column : in Column_Number)
-                         return String;
+   function Query_Value
+     (Query  : in Select_Statement;
+      Column : in Column_Number) return String;
 
-   function Last (Query  : in Select_Statement;
-                  Column : in Column_Number)
-                  return Natural;
+   function Last
+     (Query  : in Select_Statement;
+      Column : in Column_Number) return Natural;
 
    --  -----------------------------------------------------------------  --
    --  Actions
 
-   function Get_SQL_Select (Query : in Select_Statement;
-                            Table : in String)
-                            return String;
+   function Get_SQL_Select
+     (Query : in Select_Statement;
+      Table : in String) return String;
 
-   procedure SQL_Select (DB      : in     Database;
-                         Query   : in out Select_Statement;
-                         Table   : in     String;
-                         Cursor  : in     Databases.Cursor := No_Cursor);
+   procedure SQL_Select
+     (DB      : in     Database;
+      Query   : in out Select_Statement;
+      Table   : in     String;
+      Cursor  : in     Databases.Cursor := No_Cursor);
 
-   procedure Fetch  (Query : in     Select_Statement;
-                     Found :    out Boolean);
+   procedure Fetch
+     (Query : in     Select_Statement;
+      Found :    out Boolean);
 
-   procedure Parameter (Parameters :    out Parameter_Set;
-                        Column     : in     Column_Number;
-                        Mode       : in     Natural;
-                        Address    : in     System.Address;
-                        Size       : in     Natural;
-                        Data_Model : in     Data_Type);
+   procedure Parameter
+     (Parameters : in out Parameter_Set;
+      Column     : in     Column_Number;
+      Mode       : in     Natural;
+      Address    : in     System.Address;
+      Size       : in     Natural;
+      Data_Model : in     Data_Type);
 
-   procedure Execute (DB         : in Database;
-                      Command    : in String;
-                      Parameters : in Parameter_Set := No_Parameter);
+   procedure Execute
+     (DB         : in Database;
+      Command    : in String;
+      Parameters : in Parameter_Set := No_Parameter);
 
    procedure Free (Query : in out Select_Statement);
 
@@ -224,35 +230,33 @@ private
    package ODBC     renames Win32.Sql;
    package ODBC_EXT renames Win32.Sqlext;
 
-   procedure Check_SQL_Error (DB               : in Database;
-                              RC               : in ODBC.RETCODE;
-                              Procedure_Name   : in String;
-                              Error_Message    : in String := "";
-                              Statement_Handle : in ODBC.HSTMT
-                                               := System.Null_Address);
+   procedure Check_SQL_Error
+     (DB               : in Database;
+      RC               : in ODBC.RETCODE;
+      Procedure_Name   : in String;
+      Error_Message    : in String := "";
+      Statement_Handle : in ODBC.HSTMT := System.Null_Address);
    use Ada.Strings.Unbounded;
 
    type String_Access is access all String;
 
    -------------------------------------------------------------------------
 
-   type Database is
-      record
-         DBC_Handle             : aliased ODBC.HDBC;
-         DBC_Environment_Handle : aliased ODBC.HENV;
-         Driver, UID, PASSWD    : String_Access;
-      end record;
+   type Database is record
+      DBC_Handle             : aliased ODBC.HDBC;
+      DBC_Environment_Handle : aliased ODBC.HENV;
+      Driver, UID, PASSWD    : String_Access;
+   end record;
 
-   type Field_Data is
-      record
-         Name        : Unbounded_String;
-         Data_Model  : Data_Type;
-         Query_Value : Unbounded_String;
-         Operator    : Operators;
-         Address     : System.Address;
-         Size        : ODBC.SDWORD;
-         Last        : aliased ODBC.SDWORD;
-      end record;
+   type Field_Data is record
+      Name        : Unbounded_String;
+      Data_Model  : Data_Type;
+      Query_Value : Unbounded_String;
+      Operator    : Operators;
+      Address     : System.Address;
+      Size        : ODBC.SDWORD;
+      Last        : aliased ODBC.SDWORD;
+   end record;
 
    type Fields_Array is array (Column_Number range <>) of Field_Data;
 
@@ -260,37 +264,34 @@ private
 
    -------------------------------------------------------------------------
 
-   type Select_Statement (N : Column_Number) is
-      record
-         Base                 : Database;
-         DBC_Statement_Handle : aliased ODBC.HSTMT;
-         SQL                  : String_Access;
-         Fields               : Fields_Array (1 .. N);
-         For_Update           : For_Update_Options := None;
-         Where_Clause         : Unbounded_String;
-         SQL_Clause           : Unbounded_String;
-      end record;
+   type Select_Statement (N : Column_Number) is record
+      Base                 : Database;
+      DBC_Statement_Handle : aliased ODBC.HSTMT;
+      SQL                  : String_Access;
+      Fields               : Fields_Array (1 .. N);
+      For_Update           : For_Update_Options := None;
+      Where_Clause         : Unbounded_String;
+      SQL_Clause           : Unbounded_String;
+   end record;
 
    -------------------------------------------------------------------------
 
-   type Parameter_Data is
-      record
-         Mode        : ODBC.SWORD;
-         Data_Model  : Data_Type;
-         Address     : System.Address;
-         Size        : ODBC.SDWORD;
-         Last        : aliased ODBC.SDWORD;
-      end record;
+   type Parameter_Data is record
+      Mode        : ODBC.SWORD;
+      Data_Model  : Data_Type;
+      Address     : System.Address;
+      Size        : ODBC.SDWORD;
+      Last        : aliased ODBC.SDWORD;
+   end record;
 
    type Parameter_Array is array (Column_Number range <>) of Parameter_Data;
 
-   type Parameter_Set (N : Column_Number) is
-      record
-         Parameters : Parameter_Array (1 .. N);
-      end record;
+   type Parameter_Set (N : Column_Number) is record
+      Parameters : Parameter_Array (1 .. N);
+   end record;
 
-   Empty_Parameter_Set : Parameter_Set (0);
-   No_Parameter : constant Parameter_Set := Empty_Parameter_Set;
+   No_Parameter : constant Parameter_Set :=
+                    (N => 0, Parameters => (1 .. 0 => <>));
 
    -------------------------------------------------------------------------
 

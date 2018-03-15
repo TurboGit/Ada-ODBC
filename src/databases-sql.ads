@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
---                                Database                                  --
+--                                 Database                                 --
 --                                                                          --
---                        Copyright (C) 1999-2018                           --
+--                         Copyright (C) 1999-2018                          --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -36,15 +36,15 @@ package Databases.SQL is
 
    Empty_String : constant String := "";
 
-   function Build_Select (Fields     : in String  := Empty_String;
-                          From       : in String;
-                          Where      : in String  := Empty_String;
-                          For_Update : in For_Update_Options := None)
-                          return String;
+   function Build_Select
+     (Fields     : in String  := Empty_String;
+      From       : in String;
+      Where      : in String  := Empty_String;
+      For_Update : in For_Update_Options := None) return String;
 
-   function Build_Update (Table : in String;
-                          Set   : in String;
-                          Where : in String := Empty_String)
-                          return String;
+   function Build_Update
+     (Table : in String;
+      Set   : in String;
+      Where : in String := Empty_String) return String;
 
 end Databases.SQL;

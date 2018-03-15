@@ -1,7 +1,7 @@
 ------------------------------------------------------------------------------
---                                Database                                  --
+--                                 Database                                 --
 --                                                                          --
---                        Copyright (C) 1999-2018                           --
+--                         Copyright (C) 1999-2018                          --
 --                                                                          --
 --  This library is free software; you can redistribute it and/or modify    --
 --  it under the terms of the GNU General Public License as published by    --
@@ -23,11 +23,10 @@
 
 private package Databases.Types is
 
-   type Data_Values is
-      record
-         C_Value   : ODBC.SWORD;
-         SQL_Value : ODBC.SWORD;
-      end record;
+   type Data_Values is record
+      C_Value   : ODBC.SWORD;
+      SQL_Value : ODBC.SWORD;
+   end record;
 
    SQL_To_C : array (Data_Type) of Data_Values :=
      (SQL_CHAR      => (Win32.Sql.SQL_C_CHAR,      Win32.Sql.SQL_CHAR),
